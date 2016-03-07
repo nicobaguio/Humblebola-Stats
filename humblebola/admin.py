@@ -4,4 +4,9 @@ from django.contrib import admin
 
 from .models import *
 
-admin.site.register(Players)
+class PlayerAdmin(admin.ModelAdmin):
+    list_display = ('last_name', 'first_name')
+    fields = (('last_name', 'first_name'),
+                ('real_first_name', 'real_last_name'),
+                 'current_jersey_number')
+admin.site.register(Players, PlayerAdmin)
