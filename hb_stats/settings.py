@@ -56,7 +56,7 @@ ROOT_URLCONF = 'hb_stats.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'hb_stats', 'templates'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

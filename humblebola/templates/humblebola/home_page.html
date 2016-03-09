@@ -1,46 +1,40 @@
+{% extends "base.html" %}
 {% load staticfiles %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ league.short_name }} - {{ league.name }}</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/layout.css' %}">
-</head>
-<body>
-    <header>
-        <nav id="top-nav">
-            <ul>
-                <li>Home</li>
-                <li>Advanced Stats 101</li>
-                {% for league in leagues %}
-                <ul>
-                    <li>{{ league.short_name }} Stats</li>
-                </ul>
-                {% endfor %}
-            </ul>
-            <ul>
-                <li>Facebook</li>
-                <li>Twitter</li>
-            </ul>
-        </nav>
-        <nav id="main-nav">
-            <ul>
-                <li>Home</li>
-                <li>Scores & Schedule</li>
-                <li>Teams</li>
-                <li>Players</li>
-            </ul>
-        </nav>
-    </header>
-    <section>
-            This is the main body!
-    </section>
-    <footer>
+{% block title %}{{ league.short_name }} - {{ league.name }}{% endblock %}
+
+{% block content %}
+<header>
+    <nav id="top-nav">
         <ul>
-            <li>About</li>
-            <li>Contact Us</li>
-            <p>&copy; 2016 HumbleBola</p>
+            <a href="http://humblebola.com/advanced-stats-primer/"><li>Advanced Stats 101</li></a>
+            {% for league in leagues %}
+            <ul>
+                <a href="{% url 'home_page' league.short_name %}"><li>{{ league.short_name }} Stats</li></a>
+            </ul>
+            {% endfor %}
         </ul>
-    </footer>
-</body>
-</html>
+        <ul>
+            <a href="https://www.facebook.com/HumbleBola/"><li>Facebook</li></a>
+            <a href="https://twitter.com/HumbleBola_"><li>Twitter</li></a>
+        </ul>
+    </nav>
+    <nav id="main-nav">
+        <ul>
+            <li>Scores & Schedule</li>
+            <li>Teams</li>
+            <li>Players</li>
+        </ul>
+    </nav>
+</header>
+<section>
+        This is the main body!
+</section>
+<footer>
+    <ul>
+        <li>About</li>
+        <li>Contact Us</li>
+        <p>&copy; 2016 HumbleBola</p>
+    </ul>
+</footer>
+{% endblock %}
