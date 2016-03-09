@@ -9,4 +9,7 @@ class PlayerAdmin(admin.ModelAdmin):
     fields = (('last_name', 'first_name'),
                 ('real_first_name', 'real_last_name'),
                  'current_jersey_number')
-admin.site.register(Players, PlayerAdmin)
+
+admin.site.register(Player, PlayerAdmin)
+admin.site.register(Tournament)
+admin.site.register(League)

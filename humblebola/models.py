@@ -10,16 +10,15 @@ from __future__ import unicode_literals
 from django.db import models
 
 __all__ = [
-    "ArchivedTeamNames", "AuthGroup", "AuthGroupPermissions", "AuthPermission",
-    "AuthUser", "AuthUserGroups", "AuthUserUserPermissions", "DjangoAdminLog",
-    "DjangoContentType", "DjangoMigrations", "DjangoSession", "FibaGameInfos",
-    "FibaGamePlayers", "GameEvents", "GamePeriodScorings", "GamePlayerStats",
-    "GameTeamStats", "Games", "Leagues", "PlayerLeagues",
-    "PlayerTournamentTeams", "Players", "SchemaMigrations", "Teams",
-    "Tournaments", "Users", "Videos"]
+    "ArchivedTeamName", "AuthGroup", "AuthGroupPermission", "AuthPermission",
+    "AuthUser", "AuthUserGroup", "AuthUserUserPermission", "DjangoAdminLog",
+    "DjangoContentType", "DjangoMigrations", "DjangoSession", "FibaGameInfo",
+    "FibaGamePlayer", "GameEvent", "GamePeriodScoring", "GamePlayerStat",
+    "GameTeamStat", "Game", "League", "PlayerLeague", "PlayerTournamentTeam",
+     "Player", "SchemaMigrations", "Team", "Tournament", "User", "Video"]
 
 
-class ArchivedTeamNames(models.Model):
+class ArchivedTeamName(models.Model):
     team_id = models.IntegerField(blank=True, null=True)
     code = models.CharField(max_length=255, blank=True, null=True)
     team_name = models.CharField(max_length=255, blank=True, null=True)
@@ -41,7 +40,7 @@ class AuthGroup(models.Model):
         db_table = 'auth_group'
 
 
-class AuthGroupPermissions(models.Model):
+class AuthGroupPermission(models.Model):
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
     permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
 
@@ -79,7 +78,7 @@ class AuthUser(models.Model):
         db_table = 'auth_user'
 
 
-class AuthUserGroups(models.Model):
+class AuthUserGroup(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
 
@@ -89,7 +88,7 @@ class AuthUserGroups(models.Model):
         unique_together = (('user', 'group'),)
 
 
-class AuthUserUserPermissions(models.Model):
+class AuthUserUserPermission(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
 
@@ -143,7 +142,7 @@ class DjangoSession(models.Model):
         db_table = 'django_session'
 
 
-class FibaGameInfos(models.Model):
+class FibaGameInfo(models.Model):
     game_id = models.IntegerField(blank=True, null=True)
     fiba_url = models.CharField(max_length=255, blank=True, null=True)
     fiba_id = models.IntegerField(blank=True, null=True)
@@ -158,7 +157,7 @@ class FibaGameInfos(models.Model):
         db_table = 'fiba_game_infos'
 
 
-class FibaGamePlayers(models.Model):
+class FibaGamePlayer(models.Model):
     game_id = models.IntegerField(blank=True, null=True)
     team_number = models.IntegerField(blank=True, null=True)
     player_number = models.IntegerField(blank=True, null=True)
@@ -173,7 +172,7 @@ class FibaGamePlayers(models.Model):
         db_table = 'fiba_game_players'
 
 
-class GameEvents(models.Model):
+class GameEvent(models.Model):
     game_id = models.IntegerField(blank=True, null=True)
     team_id = models.IntegerField(blank=True, null=True)
     opp_team_id = models.IntegerField(blank=True, null=True)
@@ -193,7 +192,7 @@ class GameEvents(models.Model):
         db_table = 'game_events'
 
 
-class GamePeriodScorings(models.Model):
+class GamePeriodScoring(models.Model):
     game_id = models.IntegerField(blank=True, null=True)
     period = models.IntegerField(blank=True, null=True)
     home_pts = models.IntegerField(blank=True, null=True)
@@ -204,7 +203,7 @@ class GamePeriodScorings(models.Model):
         db_table = 'game_period_scorings'
 
 
-class GamePlayerStats(models.Model):
+class GamePlayerStat(models.Model):
     game_id = models.IntegerField(blank=True, null=True)
     team_id = models.IntegerField(blank=True, null=True)
     player_id = models.IntegerField(blank=True, null=True)
@@ -233,7 +232,7 @@ class GamePlayerStats(models.Model):
         db_table = 'game_player_stats'
 
 
-class GameTeamStats(models.Model):
+class GameTeamStat(models.Model):
     game_id = models.IntegerField(blank=True, null=True)
     team_id = models.IntegerField(blank=True, null=True)
     seconds_played = models.IntegerField(blank=True, null=True)
@@ -266,7 +265,7 @@ class GameTeamStats(models.Model):
         db_table = 'game_team_stats'
 
 
-class Games(models.Model):
+class Game(models.Model):
     league_id = models.IntegerField(blank=True, null=True)
     schedule = models.DateTimeField(blank=True, null=True)
     game_type = models.IntegerField(blank=True, null=True)
@@ -283,7 +282,7 @@ class Games(models.Model):
         db_table = 'games'
 
 
-class Leagues(models.Model):
+class League(models.Model):
     code = models.CharField(max_length=255, blank=True, null=True)
     short_name = models.CharField(max_length=255, blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, null=True)
@@ -300,7 +299,7 @@ class Leagues(models.Model):
         return self.short_name + '-' + self.name
 
 
-class PlayerLeagues(models.Model):
+class PlayerLeague(models.Model):
     player_id = models.IntegerField()
     league_id = models.IntegerField()
 
@@ -310,7 +309,7 @@ class PlayerLeagues(models.Model):
         unique_together = (('player_id', 'league_id'),)
 
 
-class PlayerTournamentTeams(models.Model):
+class PlayerTournamentTeam(models.Model):
     player_id = models.IntegerField(blank=True, null=True)
     tournament_id = models.IntegerField(blank=True, null=True)
     team_id = models.IntegerField(blank=True, null=True)
@@ -321,7 +320,7 @@ class PlayerTournamentTeams(models.Model):
         unique_together = (('player_id', 'team_id', 'tournament_id'),)
 
 
-class Players(models.Model):
+class Player(models.Model):
     first_name = models.CharField(max_length=255, blank=True, null=True)
     last_name = models.CharField(max_length=255, blank=True, null=True)
     current_league_id = models.IntegerField(blank=True, null=True)
@@ -358,7 +357,7 @@ class SchemaMigrations(models.Model):
         db_table = 'schema_migrations'
 
 
-class Teams(models.Model):
+class Team(models.Model):
     league_id = models.IntegerField(blank=True, null=True)
     code = models.CharField(unique=True, max_length=255, blank=True, null=True)
     team_name = models.CharField(max_length=255, blank=True, null=True)
@@ -370,7 +369,7 @@ class Teams(models.Model):
         db_table = 'teams'
 
 
-class Tournaments(models.Model):
+class Tournament(models.Model):
     parent_id = models.IntegerField(blank=True, null=True)
     league_id = models.IntegerField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, null=True)
@@ -384,7 +383,7 @@ class Tournaments(models.Model):
         db_table = 'tournaments'
 
 
-class Users(models.Model):
+class User(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
     email = models.CharField(unique=True, max_length=255)
     encrypted_password = models.CharField(max_length=255)
@@ -405,7 +404,7 @@ class Users(models.Model):
         db_table = 'users'
 
 
-class Videos(models.Model):
+class Video(models.Model):
     league_id = models.IntegerField(blank=True, null=True)
     date = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, null=True)
