@@ -296,6 +296,9 @@ class Leagues(models.Model):
         managed = False
         db_table = 'leagues'
 
+    def __unicode__(self):
+        return self.short_name + '-' + self.name
+
 
 class PlayerLeagues(models.Model):
     player_id = models.IntegerField()
