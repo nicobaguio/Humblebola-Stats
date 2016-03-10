@@ -10,6 +10,12 @@ class PlayerAdmin(admin.ModelAdmin):
                 ('real_first_name', 'real_last_name'),
                  'current_jersey_number')
 
+class TournamentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'short_name' , 'start_date', 'end_date')
+    fields = (('last_name', 'first_name'),
+                ('real_first_name', 'real_last_name'),
+                 'current_jersey_number')
+
 admin.site.register(Player, PlayerAdmin)
-admin.site.register(Tournament)
+admin.site.register(Tournament, TournamentAdmin)
 admin.site.register(League)

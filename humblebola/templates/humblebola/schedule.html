@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table>
+        <tr>
+            <th>Home Team</th>
+            <th>Away Team</th>
+            <th>Date</th>
+            <th>Home Team score</th>
+            <th>Away Team score</th>
+        </tr>
+        <tr>
+        {% for game in games %}
+            {% home = teams.objects.get(league_id= league.id, id=game.home_team_id) %}
+            {% away = teams.objects.get(league_id= league.id, id=game.away_team_id) %}
+            <td>{{ home.code }}</td>
+            <td>{{ away.code }}</td>
+            <td>{{ game.schedule }}</td>
+            <td>{{ game.home_pts }}</td>
+            <td>{{ game.away_pts }}</td>
+        {% endfor %}
+        </tr>
+    </table>
+{% endblock %}

@@ -21,5 +21,5 @@ from . import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'(?i)(?P<short_name>\w+)/', include('humblebola.urls'))
+    url(r'(?P<code>\w+)/', include('humblebola.urls'))
 ]
