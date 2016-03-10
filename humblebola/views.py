@@ -21,9 +21,8 @@ def schedule(request, code):
 
     current_games = Game.objects.filter(
         league_id = league.id,
-        schedule__lt=date.today(),
-        schedule__gt=date.today(),
-        )
+        schedule__gt=current_tournament.start_date,
+        schedule__lt=current_tournament.end_date).order_by('schedule')
 
     return render(request, 'humblebola/schedule.html', {
         'league': league,

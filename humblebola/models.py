@@ -17,6 +17,52 @@ __all__ = [
     "GameTeamStat", "Game", "League", "PlayerLeague", "PlayerTournamentTeam",
      "Player", "SchemaMigrations", "Team", "Tournament", "User", "Video"]
 
+class League(models.Model):
+    code = models.CharField(max_length=255, blank=True, null=True)
+    short_name = models.CharField(max_length=255, blank=True, null=True)
+    name = models.CharField(max_length=255, blank=True, null=True)
+    sort = models.IntegerField(blank=True, null=True)
+    periods = models.IntegerField(blank=True, null=True)
+    mins_per_period = models.IntegerField(blank=True, null=True)
+    level = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'leagues'
+
+    def __unicode__(self):
+        return self.short_name + '-' + self.name
+
+
+class Team(models.Model):
+    league = models.ForeignKey(League)
+    code = models.CharField(unique=True, max_length=255, blank=True, null=True)
+    team_name = models.CharField(max_length=255, blank=True, null=True)
+    nickname = models.CharField(max_length=255, blank=True, null=True)
+    logo = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'teams'
+
+
+class Game(models.Model):
+    league = models.ForeignKey(League)
+    schedule = models.DateTimeField(blank=True, null=True)
+    game_type = models.IntegerField(blank=True, null=True)
+    home_team = models.ForeignKey(Team, related_name="home_games")
+    away_team = models.ForeignKey(Team, related_name="away_games")
+    home_pts = models.IntegerField(blank=True, null=True)
+    away_pts = models.IntegerField(blank=True, null=True)
+    periods = models.IntegerField(blank=True, null=True)
+    pre_game_article_url = models.CharField(max_length=255, blank=True, null=True)
+    post_game_article_url = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'games'
+
+
 
 class ArchivedTeamName(models.Model):
     team_id = models.IntegerField(blank=True, null=True)
@@ -265,40 +311,6 @@ class GameTeamStat(models.Model):
         db_table = 'game_team_stats'
 
 
-class Game(models.Model):
-    league_id = models.IntegerField(blank=True, null=True)
-    schedule = models.DateTimeField(blank=True, null=True)
-    game_type = models.IntegerField(blank=True, null=True)
-    home_team_id = models.IntegerField(blank=True, null=True)
-    away_team_id = models.IntegerField(blank=True, null=True)
-    home_pts = models.IntegerField(blank=True, null=True)
-    away_pts = models.IntegerField(blank=True, null=True)
-    periods = models.IntegerField(blank=True, null=True)
-    pre_game_article_url = models.CharField(max_length=255, blank=True, null=True)
-    post_game_article_url = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'games'
-
-
-class League(models.Model):
-    code = models.CharField(max_length=255, blank=True, null=True)
-    short_name = models.CharField(max_length=255, blank=True, null=True)
-    name = models.CharField(max_length=255, blank=True, null=True)
-    sort = models.IntegerField(blank=True, null=True)
-    periods = models.IntegerField(blank=True, null=True)
-    mins_per_period = models.IntegerField(blank=True, null=True)
-    level = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'leagues'
-
-    def __unicode__(self):
-        return self.short_name + '-' + self.name
-
-
 class PlayerLeague(models.Model):
     player_id = models.IntegerField()
     league_id = models.IntegerField()
@@ -356,21 +368,9 @@ class SchemaMigrations(models.Model):
         db_table = 'schema_migrations'
 
 
-class Team(models.Model):
-    league_id = models.IntegerField(blank=True, null=True)
-    code = models.CharField(unique=True, max_length=255, blank=True, null=True)
-    team_name = models.CharField(max_length=255, blank=True, null=True)
-    nickname = models.CharField(max_length=255, blank=True, null=True)
-    logo = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'teams'
-
-
 class Tournament(models.Model):
     parent_id = models.IntegerField(blank=True, null=True)
-    league_id = models.IntegerField(blank=True, null=True)
+    league = models.ForeignKey(League, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
