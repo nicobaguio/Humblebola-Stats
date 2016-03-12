@@ -27,7 +27,6 @@ def schedule(request, code):
         schedule__gt=current_tournament.start_date,
         schedule__lt=current_tournament.end_date).order_by('schedule')
 
-
     next_game = Game.objects.filter(
         league_id=league.id,
         schedule__range=(datetime.combine(date.today(), time.min),
