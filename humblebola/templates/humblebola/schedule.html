@@ -56,6 +56,20 @@
         {% endfor %}
     </table>
 <h1>PREVIOUS GAME</h1>
+    <table>
+        <tr>
+            <th>Home Team</th>
+            <th>Away Team</th>
+            <th>Date</th>
+        </tr>
+        {% for game in prev_game %}
+            <tr>
+                <td>{{ game.home_team.code }}</td>
+                <td>{{ game.away_team.code }}</td>
+                <td>{{ game.schedule }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 <h1>STANDINGS</h1>}}
 
 {% endblock %}

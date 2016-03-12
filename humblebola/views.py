@@ -32,10 +32,20 @@ def schedule(request, code):
         schedule__range=(datetime.combine(date.today(), time.min),
                          datetime.combine(date.today(), time.max)))
 
+    prev_game_date = current_games.filter(
+        schedule__lt=next_game[0].schedule).order_by(
+        '-schedule')[0].schedule.date()
+
+    prev_game = Game.objects.filter(
+        league_id=league.id,
+        schedule__range=(datetime.combine(prev_game_date, time.min),
+                         datetime.combine(prev_game_date, time.max)))
+
     return render(request, 'humblebola/schedule.html', {
         'league': league,
         'tournament': current_tournament,
         'next_game': next_game,
+        'prev_game': prev_game,
         'regular_games': current_games.filter(game_type=0),
         'playoff_games': current_games.filter(game_type=1),
         'teams': Team.objects.all()})
