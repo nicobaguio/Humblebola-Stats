@@ -27,22 +27,26 @@ def schedule(request, code):
         schedule__gt=current_tournament.start_date,
         schedule__lt=current_tournament.end_date).order_by('schedule')
 
-    next_game_date = current_games.filter(
-        schedule__gt=date.today()).order_by('schedule')[0].schedule.date()
+    if date.today() > current_tournament.end_date:
+        next_game = iter([])
+        prev_game = iter([])
+    else:
+        next_game_date = current_games.filter(
+            schedule__gt=date.today()).order_by('schedule')[0].schedule.date()
 
-    next_game = Game.objects.filter(
-        league_id=league.id,
-        schedule__range=(datetime.combine(next_game_date, time.min),
-                         datetime.combine(next_game_date, time.max)))
+        next_game = Game.objects.filter(
+            league_id=league.id,
+            schedule__range=(datetime.combine(next_game_date, time.min),
+                             datetime.combine(next_game_date, time.max)))
 
-    prev_game_date = current_games.filter(
-        schedule__lt=next_game[0].schedule).order_by(
-        '-schedule')[0].schedule.date()
+        prev_game_date = current_games.filter(
+            schedule__lt=next_game[0].schedule).order_by(
+            '-schedule')[0].schedule.date()
 
-    prev_game = Game.objects.filter(
-        league_id=league.id,
-        schedule__range=(datetime.combine(prev_game_date, time.min),
-                         datetime.combine(prev_game_date, time.max)))
+        prev_game = Game.objects.filter(
+            league_id=league.id,
+            schedule__range=(datetime.combine(prev_game_date, time.min),
+                             datetime.combine(prev_game_date, time.max)))
 
     return render(request, 'humblebola/schedule.html', {
         'league': league,
