@@ -1,4 +1,7 @@
 from django.shortcuts import get_object_or_404, render
+from django.db.models import F
+from decimal import Decimal
+from operator import itemgetter
 
 from .models import *
 from datetime import date, datetime, time
@@ -12,6 +15,7 @@ def home_page(request, code):
 
 def schedule(request, code):
     league = get_object_or_404(League, code=code)
+
     if code == 'pba':
         current_tournament = Tournament.objects.get(
             league_id=league.id,
@@ -47,12 +51,42 @@ def schedule(request, code):
             league_id=league.id,
             schedule__range=(datetime.combine(prev_game_date, time.min),
                              datetime.combine(prev_game_date, time.max)))
+    standings = []
+
+    for team in Team.objects.filter(league_id=league.id):
+        win = current_games.filter(
+                            game_type=0,
+                            home_team_id=team.id,
+                            home_pts__gt=F('away_pts')).count() + \
+              current_games.filter(
+                            game_type=0,
+                            away_team_id=team.id,
+                            away_pts__gt=F('home_pts')).count()
+
+        loss = current_games.filter(
+                            game_type=0,
+                            home_team_id=team.id,
+                            home_pts__lt=F('away_pts')).count() + \
+            current_games.filter(
+                            game_type=0,
+                            away_team_id=team.id,
+                            away_pts__lt=F('home_pts')).count()
+
+        win_p = (Decimal(win)/Decimal(win+loss)).quantize(Decimal(10)**-3)
+
+        standings.append({'team': team.code,
+                          'win': win,
+                          'loss': loss,
+                          'win_p': win_p})
+
+    standings = iter(sorted(standings, key=itemgetter('win_p'), reverse=True))
 
     return render(request, 'humblebola/schedule.html', {
         'league': league,
         'tournament': current_tournament,
         'next_game': next_game,
         'prev_game': prev_game,
+        'standings': standings,
         'regular_games': current_games.filter(game_type=0),
         'playoff_games': current_games.filter(game_type=1),
-        'teams': Team.objects.all()})
+        'teams': Team.objects.filter(league_id=league.id)})

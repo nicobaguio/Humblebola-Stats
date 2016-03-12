@@ -71,4 +71,20 @@
         {% endfor %}
     </table>
 <h1>STANDINGS</h1>
+    <table>
+        <tr>
+            <th>Team</th>
+            <th>W</th>
+            <th>L</th>
+            <th>PCT%</th>
+        </tr>
+        {% for list in standings %}
+            <tr>
+                <td>{{ list.team }}</td>
+                <td>{{ list.win }}</td>
+                <td>{{ list.loss }}</td>
+                <td>{{ list.win_p }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

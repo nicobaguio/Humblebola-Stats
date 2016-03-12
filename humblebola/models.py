@@ -15,7 +15,8 @@ __all__ = [
     "DjangoContentType", "DjangoMigrations", "DjangoSession", "FibaGameInfo",
     "FibaGamePlayer", "GameEvent", "GamePeriodScoring", "GamePlayerStat",
     "GameTeamStat", "Game", "League", "PlayerLeague", "PlayerTournamentTeam",
-     "Player", "SchemaMigrations", "Team", "Tournament", "User", "Video"]
+    "Player", "SchemaMigrations", "Team", "Tournament", "User", "Video"]
+
 
 class League(models.Model):
     code = models.CharField(max_length=255, blank=True, null=True)
@@ -55,13 +56,14 @@ class Game(models.Model):
     home_pts = models.IntegerField(blank=True, null=True)
     away_pts = models.IntegerField(blank=True, null=True)
     periods = models.IntegerField(blank=True, null=True)
-    pre_game_article_url = models.CharField(max_length=255, blank=True, null=True)
-    post_game_article_url = models.CharField(max_length=255, blank=True, null=True)
+    pre_game_article_url = models.CharField(max_length=255,
+                                            blank=True, null=True)
+    post_game_article_url = models.CharField(max_length=255,
+                                             blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'games'
-
 
 
 class ArchivedTeamName(models.Model):
@@ -150,7 +152,8 @@ class DjangoAdminLog(models.Model):
     object_repr = models.CharField(max_length=200)
     action_flag = models.SmallIntegerField()
     change_message = models.TextField()
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
+    content_type = models.ForeignKey('DjangoContentType',
+                                     models.DO_NOTHING, blank=True, null=True)
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
 
     class Meta:
@@ -231,7 +234,7 @@ class GameEvent(models.Model):
     success = models.NullBooleanField()
     x = models.FloatField(blank=True, null=True)
     y = models.FloatField(blank=True, null=True)
-    lineup = models.TextField(blank=True, null=True)  # This field type is a guess.
+    lineup = models.TextField(blank=True, null=True)  # This field is a guess.
 
     class Meta:
         managed = False
@@ -390,7 +393,10 @@ class User(models.Model):
     email = models.CharField(unique=True, max_length=255)
     encrypted_password = models.CharField(max_length=255)
     role = models.CharField(max_length=255)
-    reset_password_token = models.CharField(unique=True, max_length=255, blank=True, null=True)
+    reset_password_token = models.CharField(unique=True,
+                                            max_length=255,
+                                            blank=True,
+                                            null=True)
     reset_password_sent_at = models.DateTimeField(blank=True, null=True)
     remember_created_at = models.DateTimeField(blank=True, null=True)
     sign_in_count = models.IntegerField()
