@@ -7,6 +7,37 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/layout.css' %}">
 </head>
 <body>
-{% block content %}{% endblock %}
+
+{# same header for everything #}
+<header>
+    <nav id="top-nav">
+        <ul>
+            <a href="{% url 'home_page' league.code %}"><li>Home</li></a>
+            <a href="http://humblebola.com/advanced-stats-primer/"><li>Advanced Stats 101</li></a>
+            <a href="/pba"><li>PBA Stats</li> </a>
+            <a href="/uaap"><li>UAAP Stats</li> </a>
+            <a href="/ncaa"><li>NCAA Stats</li> </a>
+        </ul>
+        <ul>
+            <a href="https://www.facebook.com/HumbleBola/"><li>Facebook</li></a>
+            <a href="https://twitter.com/HumbleBola_"><li>Twitter</li></a>
+        </ul>
+    </nav>
+    <nav id="main-nav">
+        <ul>
+            <a href="{% url 'schedule' league.code %}"><li>Scores & Schedule</li></a>
+            <li>Teams</li>
+            <li>Players</li>
+        </ul>
+    </nav>
+</header>
+{% block content %}{% endblock content %}
+<footer>
+    <ul>
+        <li>About</li>
+        <li>Contact Us</li>
+        <p>&copy; 2016 HumbleBola</p>
+    </ul>
+</footer>
 </body>
 </html>

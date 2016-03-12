@@ -1,31 +1,42 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse
 
 from .models import *
-from datetime import date
+from datetime import date, datetime, time
 # Create your views here.
 
+
 def home_page(request, code):
-    league = get_object_or_404(League, code = code)
-    leagues = League.objects.all()
-    return render(request, 'humblebola/home_page.html', {'league': league, 'leagues': leagues})
+    league = get_object_or_404(League, code=code)
+    return render(request, 'humblebola/home_page.html', {'league': league})
+
 
 def schedule(request, code):
-    league = get_object_or_404(League, code = code)
-    games = Game.objects.filter(league_id=league.id)
-    current_tournament = Tournament.objects.get(
-        league_id=league.id,
-        start_date__lt=date.today(),
-        end_date__gt=date.today(),
-        parent_id__gt=0)
+    league = get_object_or_404(League, code=code)
+    if code == 'pba':
+        current_tournament = Tournament.objects.get(
+            league_id=league.id,
+            start_date__lt=date.today(),
+            end_date__gt=date.today(),
+            parent_id__gt=0)
+    else:
+        current_tournament = Tournament.objects.filter(
+            league_id=league.id).order_by('-end_date')[0]
 
     current_games = Game.objects.filter(
-        league_id = league.id,
+        league_id=league.id,
         schedule__gt=current_tournament.start_date,
         schedule__lt=current_tournament.end_date).order_by('schedule')
+
+
+    next_game = Game.objects.filter(
+        league_id=league.id,
+        schedule__range=(datetime.combine(date.today(), time.min),
+                         datetime.combine(date.today(), time.max)))
 
     return render(request, 'humblebola/schedule.html', {
         'league': league,
         'tournament': current_tournament,
-        'games': current_games,
+        'next_game': next_game,
+        'regular_games': current_games.filter(game_type=0),
+        'playoff_games': current_games.filter(game_type=1),
         'teams': Team.objects.all()})

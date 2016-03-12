@@ -3,37 +3,11 @@
 {% block title %}{{ league.short_name }} - {{ league.name }}{% endblock %}
 
 {% block content %}
-<header>
-    <nav id="top-nav">
-        <ul>
-            <a href="http://humblebola.com/advanced-stats-primer/"><li>Advanced Stats 101</li></a>
-            {% for league in leagues %}
-            <ul>
-                <a href="{% url 'home_page' league.code %}"><li>{{ league.short_name }} Stats</li></a>
-            </ul>
-            {% endfor %}
-        </ul>
-        <ul>
-            <a href="https://www.facebook.com/HumbleBola/"><li>Facebook</li></a>
-            <a href="https://twitter.com/HumbleBola_"><li>Twitter</li></a>
-        </ul>
-    </nav>
-    <nav id="main-nav">
-        <ul>
-            <a href="{% url 'schedule' league.code %}"><li>Scores & Schedule</li></a>
-            <li>Teams</li>
-            <li>Players</li>
-        </ul>
-    </nav>
-</header>
+
 <section>
         This is the main body!
 </section>
-<footer>
-    <ul>
-        <li>About</li>
-        <li>Contact Us</li>
-        <p>&copy; 2016 HumbleBola</p>
-    </ul>
-</footer>
-{% endblock %}
+{% endblock content %}
+
+
+

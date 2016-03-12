@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h1>REGULAR SEASON</h1>
     <table>
         <tr>
             <th>Home Team</th>
@@ -9,7 +10,7 @@
             <th>Home Team score</th>
             <th>Away Team score</th>
         </tr>
-        {% for game in games %}
+        {% for game in regular_games %}
             <tr>
                 <td>{{ game.home_team.code }}</td>
                 <td>{{ game.away_team.code }}</td>
@@ -19,4 +20,42 @@
             </tr>
         {% endfor %}
     </table>
+<h1>PLAYOFFS</h1>
+    <table>
+        <tr>
+            <th>Home Team</th>
+            <th>Away Team</th>
+            <th>Date</th>
+            <th>Home Team score</th>
+            <th>Away Team score</th>
+        </tr>
+        {% for game in playoff_games %}
+            <tr>
+                <td>{{ game.home_team.code }}</td>
+                <td>{{ game.away_team.code }}</td>
+                <td>{{ game.schedule }}</td>
+                <td>{{ game.home_pts }}</td>
+                <td>{{ game.away_pts }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+<h1>NEXT GAME</h1>
+    <table>
+        <tr>
+            <th>Home Team</th>
+            <th>Away Team</th>
+            <th>Date</th>
+        </tr>
+        {% for game in next_game %}
+            <tr>
+                <td>{{ game.home_team.code }}</td>
+                <td>{{ game.away_team.code }}</td>
+                <td>{{ game.schedule }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+<h1>PREVIOUS GAME</h1>
+<h1>STANDINGS</h1>}}
+
 {% endblock %}
