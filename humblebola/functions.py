@@ -3,6 +3,7 @@ from django.db.models import F
 
 
 def get_wins_losses(games, team):
+    #Gets wins and losses for a team in the games
     win = games.filter(
         game_type=0,
         home_team_id=team.id,

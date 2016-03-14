@@ -1,4 +1,6 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block content %}
 <h1>{{ team.team_name }} {{ team.nickname }}</h1>
 <h2>{{ seasons|length }} Seasons</h2>
 
@@ -18,15 +20,13 @@
         <th>Results</th>
         <th>Top WS</th>
     </tr>
-    {% for tournament in tournaments %}
+    {% for item in standings %}
         <tr>
-            {% if tournament.parent_id %}
-                <td>{{ tournament.short_name }}</td>
-            {% else %}
-                <td>{{ tournament.name }}</td>
-            {% endif %}
+            <td>{{ item.tournament }}</td>
+            <td>{{ item.win }}</td>
+            <td>{{ item.loss }}</td>
+            <td>{{ item.win_p }}</td>
         </tr>
-
     {% endfor %}
 </table>
-
+{% endblock %}

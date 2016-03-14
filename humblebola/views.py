@@ -149,8 +149,28 @@ def team_home_page(request, code, team_code):
                 'tournament_id').values(
                 'tournament_id')).values_list('parent_id', flat=True))
 
-    tournaments = child_tournaments | parent_tournaments
-    return render(request, 'humblebola/team_page.html', {
+    team_tournaments = child_tournaments | parent_tournaments
+
+    standings = []
+
+    for tournament in team_tournaments.order_by('start_date', 'id'):
+        current_games = Game.objects.filter(
+            league_id=league.id,
+            schedule__gt=tournament.start_date,
+            schedule__lt=tournament.end_date)
+
+        wins_and_losses = functions.get_wins_losses(current_games, team)
+        win = wins_and_losses['win']
+        loss = wins_and_losses['loss']
+        win_p = wins_and_losses['win_p']
+
+        standings.append({'tournament': tournament,
+                          'win': win,
+                          'loss': loss,
+                          'win_p': win_p})
+
+    return render(request, 'humblebola/team_home_page.html', {
+        'league': league,
         'team': team,
         'seasons': parent_tournaments if code == 'pba' else child_tournaments,
-        'tournaments': tournaments.order_by('start_date', 'id')})
+        'standings': standings})
