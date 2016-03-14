@@ -5,8 +5,57 @@
 {% block content %}
 
 <section>
-        This is the main body!
+        {% lorem 5 b%}
 </section>
+<div id="side-bar">
+    <h1>NEXT GAME</h1>
+        <table>
+            <tr>
+                <th>Home Team</th>
+                <th>Away Team</th>
+                <th>Date</th>
+            </tr>
+            {% for game in next_game %}
+                <tr>
+                    <td>{{ game.home_team.code }}</td>
+                    <td>{{ game.away_team.code }}</td>
+                    <td>{{ game.schedule }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    <h1>PREVIOUS GAME</h1>
+        <table>
+            <tr>
+                <th>Home Team</th>
+                <th>Away Team</th>
+                <th>Date</th>
+            </tr>
+            {% for game in prev_game %}
+                <tr>
+                    <td>{{ game.home_team.code }}</td>
+                    <td>{{ game.away_team.code }}</td>
+                    <td>{{ game.schedule }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    <h1>STANDINGS</h1>
+        <table>
+            <tr>
+                <th>Team</th>
+                <th>W</th>
+                <th>L</th>
+                <th>PCT%</th>
+            </tr>
+            {% for list in standings|dictsortreversed:"win_p" %}
+                <tr>
+                    <td>{{ list.team }}</td>
+                    <td>{{ list.win }}</td>
+                    <td>{{ list.loss }}</td>
+                    <td>{{ list.win_p }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+</div>
 {% endblock content %}
 
 

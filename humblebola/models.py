@@ -35,6 +35,24 @@ class League(models.Model):
         return self.short_name + '-' + self.name
 
 
+class Tournament(models.Model):
+    parent_id = models.IntegerField(blank=True, null=True)
+    league = models.ForeignKey(League, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, blank=True, null=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
+    sub_tournaments_count = models.IntegerField(blank=True, null=True)
+    short_name = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tournaments'
+        ordering = ('league', 'id')
+
+    def __unicode__(self):
+        return self.name
+
+
 class Team(models.Model):
     league = models.ForeignKey(League)
     code = models.CharField(unique=True, max_length=255, blank=True, null=True)
@@ -64,6 +82,44 @@ class Game(models.Model):
     class Meta:
         managed = False
         db_table = 'games'
+
+
+class Player(models.Model):
+    first_name = models.CharField(max_length=255, blank=True, null=True)
+    last_name = models.CharField(max_length=255, blank=True, null=True)
+    current_league_id = models.IntegerField(blank=True, null=True)
+    current_team_id = models.IntegerField(blank=True, null=True)
+    current_jersey_number = models.IntegerField(blank=True, null=True)
+    player_type = models.IntegerField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    photo = models.CharField(max_length=255, blank=True, null=True)
+    twitter = models.CharField(max_length=255, blank=True, null=True)
+    position = models.CharField(max_length=255, blank=True, null=True)
+    height = models.IntegerField(blank=True, null=True)
+    weight = models.IntegerField(blank=True, null=True)
+    birthday = models.DateField(blank=True, null=True)
+    birth_place = models.CharField(max_length=255, blank=True, null=True)
+    drafted = models.CharField(max_length=255, blank=True, null=True)
+    highschool = models.CharField(max_length=255, blank=True, null=True)
+    college = models.CharField(max_length=255, blank=True, null=True)
+    nickname = models.CharField(max_length=255, blank=True, null=True)
+    real_first_name = models.CharField(max_length=255, blank=True, null=True)
+    real_last_name = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'players'
+
+
+class PlayerTournamentTeam(models.Model):
+    player = models.ForeignKey(Player)
+    tournament = models.ForeignKey(Tournament)
+    team = models.ForeignKey(Team)
+
+    class Meta:
+        managed = False
+        db_table = 'player_tournament_teams'
 
 
 class ArchivedTeamName(models.Model):
@@ -324,68 +380,12 @@ class PlayerLeague(models.Model):
         unique_together = (('player_id', 'league_id'),)
 
 
-class PlayerTournamentTeam(models.Model):
-    player_id = models.IntegerField(blank=True, null=True)
-    tournament_id = models.IntegerField(blank=True, null=True)
-    team_id = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'player_tournament_teams'
-        unique_together = (('player_id', 'team_id', 'tournament_id'),)
-
-
-class Player(models.Model):
-    first_name = models.CharField(max_length=255, blank=True, null=True)
-    last_name = models.CharField(max_length=255, blank=True, null=True)
-    current_league_id = models.IntegerField(blank=True, null=True)
-    current_team_id = models.IntegerField(blank=True, null=True)
-    current_jersey_number = models.IntegerField(blank=True, null=True)
-    player_type = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    photo = models.CharField(max_length=255, blank=True, null=True)
-    twitter = models.CharField(max_length=255, blank=True, null=True)
-    position = models.CharField(max_length=255, blank=True, null=True)
-    height = models.IntegerField(blank=True, null=True)
-    weight = models.IntegerField(blank=True, null=True)
-    birthday = models.DateField(blank=True, null=True)
-    birth_place = models.CharField(max_length=255, blank=True, null=True)
-    drafted = models.CharField(max_length=255, blank=True, null=True)
-    highschool = models.CharField(max_length=255, blank=True, null=True)
-    college = models.CharField(max_length=255, blank=True, null=True)
-    nickname = models.CharField(max_length=255, blank=True, null=True)
-    real_first_name = models.CharField(max_length=255, blank=True, null=True)
-    real_last_name = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'players'
-
-
 class SchemaMigrations(models.Model):
     version = models.CharField(unique=True, max_length=255)
 
     class Meta:
         managed = False
         db_table = 'schema_migrations'
-
-
-class Tournament(models.Model):
-    parent_id = models.IntegerField(blank=True, null=True)
-    league = models.ForeignKey(League, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255, blank=True, null=True)
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
-    sub_tournaments_count = models.IntegerField(blank=True, null=True)
-    short_name = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'tournaments'
-
-    def __unicode__(self):
-        return self.name
 
 
 class User(models.Model):

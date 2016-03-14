@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+<h1>{{ team.team_name }} {{ team.nickname }}</h1>
+<h2>{{ seasons|length }} Seasons</h2>
+
+<table>
+    <tr>
+        <th>Season</th>
+        <th>W</th>
+        <th>L</th>
+        <th>W/L%</th>
+        <th>Finish</th>
+        <th>Pace</th>
+        <th>Relative Pace</th>
+        <th>ORTG</th>
+        <th>Relative ORTG</th>
+        <th>DRTG</th>
+        <th>Relative DRTG</th>
+        <th>Results</th>
+        <th>Top WS</th>
+    </tr>
+    {% for tournament in tournaments %}
+        <tr>
+            {% if tournament.parent_id %}
+                <td>{{ tournament.short_name }}</td>
+            {% else %}
+                <td>{{ tournament.name }}</td>
+            {% endif %}
+        </tr>
+
+    {% endfor %}
+</table>
+
