@@ -36,8 +36,8 @@ class League(models.Model):
 
 
 class Tournament(models.Model):
-    parent_id = models.IntegerField(blank=True, null=True)
-    league = models.ForeignKey(League, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', blank=True, null=True)
+    league = models.ForeignKey(League)
     name = models.CharField(max_length=255, blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
@@ -87,8 +87,8 @@ class Game(models.Model):
 class Player(models.Model):
     first_name = models.CharField(max_length=255, blank=True, null=True)
     last_name = models.CharField(max_length=255, blank=True, null=True)
-    current_league_id = models.IntegerField(blank=True, null=True)
-    current_team_id = models.IntegerField(blank=True, null=True)
+    current_league = models.ForeignKey(League, blank=True, null=True)
+    current_team = models.ForeignKey(Team, blank=True, null=True)
     current_jersey_number = models.IntegerField(blank=True, null=True)
     player_type = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
@@ -123,7 +123,7 @@ class PlayerTournamentTeam(models.Model):
 
 
 class ArchivedTeamName(models.Model):
-    team_id = models.IntegerField(blank=True, null=True)
+    team = models.ForeignKey(Team)
     code = models.CharField(max_length=255, blank=True, null=True)
     team_name = models.CharField(max_length=255, blank=True, null=True)
     nickname = models.CharField(max_length=255, blank=True, null=True)
@@ -248,7 +248,7 @@ class DjangoSession(models.Model):
 
 
 class FibaGameInfo(models.Model):
-    game_id = models.IntegerField(blank=True, null=True)
+    game = models.ForeignKey(Game)
     fiba_url = models.CharField(max_length=255, blank=True, null=True)
     fiba_id = models.IntegerField(blank=True, null=True)
     data_json = models.TextField(blank=True, null=True)
@@ -263,12 +263,12 @@ class FibaGameInfo(models.Model):
 
 
 class FibaGamePlayer(models.Model):
-    game_id = models.IntegerField(blank=True, null=True)
+    game = models.ForeignKey(Game)
     team_number = models.IntegerField(blank=True, null=True)
     player_number = models.IntegerField(blank=True, null=True)
     jersey_number = models.IntegerField(blank=True, null=True)
     player_name = models.CharField(max_length=255, blank=True, null=True)
-    player_id = models.IntegerField(blank=True, null=True)
+    player = models.ForeignKey(Player)
     created_at = models.DateTimeField(blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
 
@@ -278,10 +278,10 @@ class FibaGamePlayer(models.Model):
 
 
 class GameEvent(models.Model):
-    game_id = models.IntegerField(blank=True, null=True)
-    team_id = models.IntegerField(blank=True, null=True)
-    opp_team_id = models.IntegerField(blank=True, null=True)
-    player_id = models.IntegerField(blank=True, null=True)
+    game = models.ForeignKey(Game)
+    team = models.ForeignKey(Team, related_name="home_team")
+    opp_team = models.ForeignKey(Team, related_name="opp_team")
+    player = models.ForeignKey(Player)
     period = models.IntegerField(blank=True, null=True)
     secs_remaining = models.IntegerField(blank=True, null=True)
     action_type = models.CharField(max_length=255, blank=True, null=True)
@@ -298,7 +298,7 @@ class GameEvent(models.Model):
 
 
 class GamePeriodScoring(models.Model):
-    game_id = models.IntegerField(blank=True, null=True)
+    game = models.ForeignKey(Game)
     period = models.IntegerField(blank=True, null=True)
     home_pts = models.IntegerField(blank=True, null=True)
     away_pts = models.IntegerField(blank=True, null=True)
@@ -308,10 +308,43 @@ class GamePeriodScoring(models.Model):
         db_table = 'game_period_scorings'
 
 
+class GameTeamStat(models.Model):
+    game = models.ForeignKey(Game)
+    team = models.ForeignKey(Team, related_name="home_team")
+    seconds_played = models.IntegerField(blank=True, null=True)
+    fg_made = models.IntegerField(blank=True, null=True)
+    fg_attempts = models.IntegerField(blank=True, null=True)
+    three_pt_made = models.IntegerField(blank=True, null=True)
+    three_pt_attempts = models.IntegerField(blank=True, null=True)
+    ft_made = models.IntegerField(blank=True, null=True)
+    ft_attempts = models.IntegerField(blank=True, null=True)
+    offensive_reb = models.IntegerField(blank=True, null=True)
+    defensive_reb = models.IntegerField(blank=True, null=True)
+    assists = models.IntegerField(blank=True, null=True)
+    steals = models.IntegerField(blank=True, null=True)
+    blocks = models.IntegerField(blank=True, null=True)
+    turnovers = models.IntegerField(blank=True, null=True)
+    personal_fouls = models.IntegerField(blank=True, null=True)
+    pts = models.IntegerField(blank=True, null=True)
+    opp_team_stat = models.ForeignKey('self')
+    opp_team = models.ForeignKey(Team, related_name="opp_team")
+    fastbreak_pts = models.IntegerField(blank=True, null=True)
+    fastbreak_attempts = models.IntegerField(blank=True, null=True)
+    second_chance_pts = models.IntegerField(blank=True, null=True)
+    turnover_pts = models.IntegerField(blank=True, null=True)
+    team_offensive_reb = models.IntegerField(blank=True, null=True)
+    team_defensive_reb = models.IntegerField(blank=True, null=True)
+    team_turnovers = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'game_team_stats'
+
+
 class GamePlayerStat(models.Model):
-    game_id = models.IntegerField(blank=True, null=True)
-    team_id = models.IntegerField(blank=True, null=True)
-    player_id = models.IntegerField(blank=True, null=True)
+    game = models.ForeignKey(Game)
+    team = models.ForeignKey(Team)
+    player = models.ForeignKey(Player)
     player_jersey_number = models.IntegerField(blank=True, null=True)
     seconds_played = models.IntegerField(blank=True, null=True)
     fg_made = models.IntegerField(blank=True, null=True)
@@ -329,55 +362,21 @@ class GamePlayerStat(models.Model):
     personal_fouls = models.IntegerField(blank=True, null=True)
     pts = models.IntegerField(blank=True, null=True)
     started = models.NullBooleanField()
-    my_team_stat_id = models.IntegerField(blank=True, null=True)
-    opp_team_stat_id = models.IntegerField(blank=True, null=True)
+    my_team_stat = models.ForeignKey(GameTeamStat, related_name="home_team")
+    opp_team_stat = models.ForeignKey(GameTeamStat, related_name="opp_team")
 
     class Meta:
         managed = False
         db_table = 'game_player_stats'
 
 
-class GameTeamStat(models.Model):
-    game_id = models.IntegerField(blank=True, null=True)
-    team_id = models.IntegerField(blank=True, null=True)
-    seconds_played = models.IntegerField(blank=True, null=True)
-    fg_made = models.IntegerField(blank=True, null=True)
-    fg_attempts = models.IntegerField(blank=True, null=True)
-    three_pt_made = models.IntegerField(blank=True, null=True)
-    three_pt_attempts = models.IntegerField(blank=True, null=True)
-    ft_made = models.IntegerField(blank=True, null=True)
-    ft_attempts = models.IntegerField(blank=True, null=True)
-    offensive_reb = models.IntegerField(blank=True, null=True)
-    defensive_reb = models.IntegerField(blank=True, null=True)
-    assists = models.IntegerField(blank=True, null=True)
-    steals = models.IntegerField(blank=True, null=True)
-    blocks = models.IntegerField(blank=True, null=True)
-    turnovers = models.IntegerField(blank=True, null=True)
-    personal_fouls = models.IntegerField(blank=True, null=True)
-    pts = models.IntegerField(blank=True, null=True)
-    opp_team_stat_id = models.IntegerField(blank=True, null=True)
-    opp_team_id = models.IntegerField(blank=True, null=True)
-    fastbreak_pts = models.IntegerField(blank=True, null=True)
-    fastbreak_attempts = models.IntegerField(blank=True, null=True)
-    second_chance_pts = models.IntegerField(blank=True, null=True)
-    turnover_pts = models.IntegerField(blank=True, null=True)
-    team_offensive_reb = models.IntegerField(blank=True, null=True)
-    team_defensive_reb = models.IntegerField(blank=True, null=True)
-    team_turnovers = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'game_team_stats'
-
-
 class PlayerLeague(models.Model):
-    player_id = models.IntegerField()
-    league_id = models.IntegerField()
+    player = models.ForeignKey(Player)
+    league = models.ForeignKey(League)
 
     class Meta:
         managed = False
         db_table = 'player_leagues'
-        unique_together = (('player_id', 'league_id'),)
 
 
 class SchemaMigrations(models.Model):
@@ -413,7 +412,7 @@ class User(models.Model):
 
 
 class Video(models.Model):
-    league_id = models.IntegerField(blank=True, null=True)
+    league = models.ForeignKey(League)
     date = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, null=True)
     page_url = models.CharField(max_length=255, blank=True, null=True)
