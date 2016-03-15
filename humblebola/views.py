@@ -1,6 +1,4 @@
 from django.shortcuts import get_object_or_404, render
-from django.db.models import F
-from decimal import Decimal
 
 from .models import *
 from datetime import date, datetime, time
@@ -163,11 +161,25 @@ def team_home_page(request, code, team_code):
         win = wins_and_losses['win']
         loss = wins_and_losses['loss']
         win_p = wins_and_losses['win_p']
+        pace = functions.get_pace(current_games.filter(game_type=0), team)
+        rel_pace = functions.get_pace(current_games.filter(game_type=0)) - pace
+        ortg = functions.team_get_ratings(current_games.filter(
+            game_type=0), 'off', team)
+        drtg = functions.team_get_ratings(current_games.filter(
+            game_type=0), 'def', team)
+        rtg = functions.team_get_ratings(current_games.filter(
+            game_type=0))
 
         standings.append({'tournament': tournament,
                           'win': win,
                           'loss': loss,
-                          'win_p': win_p})
+                          'win_p': win_p,
+                          'pace': pace,
+                          'rel_pace': rel_pace,
+                          'ortg': ortg,
+                          'rel_ortg': ortg - rtg,
+                          'drtg': drtg,
+                          'rel_drtg': drtg - rtg})
 
     return render(request, 'humblebola/team_home_page.html', {
         'league': league,

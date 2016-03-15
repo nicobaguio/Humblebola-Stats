@@ -69,8 +69,8 @@ class Game(models.Model):
     league = models.ForeignKey(League)
     schedule = models.DateTimeField(blank=True, null=True)
     game_type = models.IntegerField(blank=True, null=True)
-    home_team = models.ForeignKey(Team, related_name="home_games")
-    away_team = models.ForeignKey(Team, related_name="away_games")
+    home_team = models.ForeignKey(Team, related_name="home_game")
+    away_team = models.ForeignKey(Team, related_name="away_game")
     home_pts = models.IntegerField(blank=True, null=True)
     away_pts = models.IntegerField(blank=True, null=True)
     periods = models.IntegerField(blank=True, null=True)
@@ -279,8 +279,8 @@ class FibaGamePlayer(models.Model):
 
 class GameEvent(models.Model):
     game = models.ForeignKey(Game)
-    team = models.ForeignKey(Team, related_name="home_team")
-    opp_team = models.ForeignKey(Team, related_name="opp_team")
+    team = models.ForeignKey(Team, related_name="team_game_event")
+    opp_team = models.ForeignKey(Team, related_name="opp_game_event")
     player = models.ForeignKey(Player)
     period = models.IntegerField(blank=True, null=True)
     secs_remaining = models.IntegerField(blank=True, null=True)
@@ -310,7 +310,7 @@ class GamePeriodScoring(models.Model):
 
 class GameTeamStat(models.Model):
     game = models.ForeignKey(Game)
-    team = models.ForeignKey(Team, related_name="home_team")
+    team = models.ForeignKey(Team, related_name="team_game_team_stat")
     seconds_played = models.IntegerField(blank=True, null=True)
     fg_made = models.IntegerField(blank=True, null=True)
     fg_attempts = models.IntegerField(blank=True, null=True)
@@ -327,7 +327,7 @@ class GameTeamStat(models.Model):
     personal_fouls = models.IntegerField(blank=True, null=True)
     pts = models.IntegerField(blank=True, null=True)
     opp_team_stat = models.ForeignKey('self')
-    opp_team = models.ForeignKey(Team, related_name="opp_team")
+    opp_team = models.ForeignKey(Team, related_name="opp_game_team_stat")
     fastbreak_pts = models.IntegerField(blank=True, null=True)
     fastbreak_attempts = models.IntegerField(blank=True, null=True)
     second_chance_pts = models.IntegerField(blank=True, null=True)
@@ -362,8 +362,12 @@ class GamePlayerStat(models.Model):
     personal_fouls = models.IntegerField(blank=True, null=True)
     pts = models.IntegerField(blank=True, null=True)
     started = models.NullBooleanField()
-    my_team_stat = models.ForeignKey(GameTeamStat, related_name="home_team")
-    opp_team_stat = models.ForeignKey(GameTeamStat, related_name="opp_team")
+    my_team_stat = models.ForeignKey(
+        GameTeamStat,
+        related_name="team_game_player_stat")
+    opp_team_stat = models.ForeignKey(
+        GameTeamStat,
+        related_name="opp_game_player_stat")
 
     class Meta:
         managed = False
