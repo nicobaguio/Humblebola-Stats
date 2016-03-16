@@ -1,0 +1,4 @@
+{% for league in leagues %}
+    <a href="{% url 'home_page' league.code %}"><li>{{ league.short_name }} Stats</li></a>
+{% endfor %}
+

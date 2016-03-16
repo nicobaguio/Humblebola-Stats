@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load template_tags %}
 
 <!DOCTYPE html>
 <html>
@@ -14,9 +15,7 @@
         <ul>
             <a href="{% url 'home_page' league.code %}"><li>Home</li></a>
             <a href="http://humblebola.com/advanced-stats-primer/"><li>Advanced Stats 101</li></a>
-            <a href="/pba"><li>PBA Stats</li></a>
-            <a href="/uaap"><li>UAAP Stats</li> </a>
-            <a href="/ncaa"><li>NCAA Stats</li> </a>
+            {% show_leagues league %}
         </ul>
         <ul>
             <a href="https://www.facebook.com/HumbleBola/"><li>Facebook</li></a>
@@ -26,7 +25,9 @@
     <nav id="main-nav">
         <ul>
             <a href="{% url 'schedule' league.code %}"><li>Scores & Schedule</li></a>
-            <li>Teams</li>
+            <li><a href="#">Teams</a>
+            <ul>{% show_teams league %}</ul>
+            </li>
             <li>Players</li>
         </ul>
     </nav>
