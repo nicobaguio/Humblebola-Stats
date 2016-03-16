@@ -1,5 +1,5 @@
 {% load staticfiles %}
-{% load template_tags %}
+{% load main_nav_tags %}
 
 <!DOCTYPE html>
 <html>
@@ -11,7 +11,7 @@
 
 {# same header for everything #}
 <header>
-    <nav id="top-nav">
+    <nav id="hb-top-nav">
         <ul>
             <a href="{% url 'home_page' league.code %}"><li>Home</li></a>
             <a href="http://humblebola.com/advanced-stats-primer/"><li>Advanced Stats 101</li></a>
@@ -22,13 +22,13 @@
             <a href="https://twitter.com/HumbleBola_"><li>Twitter</li></a>
         </ul>
     </nav>
-    <nav id="main-nav">
+    <nav id="hb-main-nav">
         <ul>
-            <a href="{% url 'schedule' league.code %}"><li>Scores & Schedule</li></a>
+            <a href="{% url 'tournaments:schedule' league.code %}"><li>Scores & Schedule</li></a>
             <li><a href="#">Teams</a>
             <ul>{% show_teams league %}</ul>
             </li>
-            <a href="{% url 'player_home_page' league.code %}"><li>Players</li></a>
+            <a href="{% url 'players:home_page' league.code %}"><li>Players</li></a>
         </ul>
     </nav>
 </header>

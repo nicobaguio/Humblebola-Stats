@@ -235,5 +235,6 @@ def team_get_ratings(games, rating=None, team=None):
 
         return (100 * points / poss).quantize(Decimal(10) ** -1)
 
+
 # 60 = seconds per minute
 # 5 = 5 players on the court

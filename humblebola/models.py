@@ -6,6 +6,8 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from __future__ import unicode_literals
+from datetime import date
+from decimal import Decimal
 
 from django.db import models
 
@@ -110,6 +112,24 @@ class Player(models.Model):
     class Meta:
         managed = False
         db_table = 'players'
+
+    def get_absolute_url(self):
+        return "/{}/players/{}-{}-{}/".format(
+            self.current_league.code,
+            self.id,
+            self.last_name,
+            self.first_name)
+
+    def get_height(self):
+        if self.height:
+            return "{}\'{}\"".format(self.height / 12, self.height % 12)
+
+    def get_age(self, date=date.today()):
+        if self.birthday:
+            age_in_days = (date - self.birthday).days
+            age = Decimal(age_in_days/365) + Decimal(age_in_days % 365) / 365
+
+            return age.quantize(Decimal(10)**-2)
 
 
 class PlayerTournamentTeam(models.Model):

@@ -3,7 +3,7 @@
     <h1>{{ league.short_name }} Players</h1>
     <ul>
     {% for player in players %}
-        <li>{{ player.last_name }}, {{ player.first_name }}</li>
+        <a href="{{ player.get_absolute_url }}"><li>{{ player.last_name }}, {{ player.first_name }}</li></a>
     {% endfor %}
 {% endblock %}
 </ul>
