@@ -70,7 +70,7 @@ def home_page(request, code):
         'teams': Team.objects.filter(league_id=league.id)})
 
 
-def schedule(request, code):
+def schedule(request, code, tournament_id=None):
     league = get_object_or_404(League, code=code)
 
     if code == 'pba':
@@ -186,3 +186,26 @@ def team_home_page(request, code, team_code):
         'team': team,
         'seasons': parent_tournaments if code == 'pba' else child_tournaments,
         'standings': standings})
+
+
+def player_home_page(request, code):
+    league = get_object_or_404(League, code=code)
+
+    if code == 'pba':
+        current_tournament = Tournament.objects.get(
+            league_id=league.id,
+            start_date__lt=date.today(),
+            end_date__gt=date.today(),
+            parent_id__gt=0)
+    else:
+        current_tournament = Tournament.objects.filter(
+            league_id=league.id).order_by('-end_date')[0]
+
+    current_players = Player.objects.filter(
+        id__in=PlayerTournamentTeam.objects.filter(
+            tournament_id=current_tournament.id).values_list(
+            'player_id', flat=True)).order_by('last_name', 'first_name')
+
+    return render(request, 'humblebola/player_home_page.html', {
+        'league': league,
+        'players': current_players})

@@ -28,7 +28,7 @@
             <li><a href="#">Teams</a>
             <ul>{% show_teams league %}</ul>
             </li>
-            <li>Players</li>
+            <a href="{% url 'player_home_page' league.code %}"><li>Players</li></a>
         </ul>
     </nav>
 </header>
