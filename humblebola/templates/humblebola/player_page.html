@@ -143,4 +143,73 @@
         </tr>
         {% endfor %}
     </table>
+
+    {% if league.id == 1 %}
+    <h3>PER 36 Minutes</h3>
+    {% else %}
+    <h3>PER 30 Minutes</h3>
+    {% endif %}
+    <table>
+        <tr>
+            <th>Season</th>
+            <th>Age</th>
+            <th>Team</th>
+            <th>Pos</th>
+            <th>GP</th>
+            <th>GS</th>
+            <th>MP</th>
+            <th>PTS</th>
+            <th>FGM</th>
+            <th>FGA</th>
+            <th>FG%</th>
+            <th>3PM</th>
+            <th>3PA</th>
+            <th>3P%</th>
+            <th>FTM</th>
+            <th>FTA</th>
+            <th>FT%</th>
+            <th>ORB</th>
+            <th>DRB</th>
+            <th>TRB</th>
+            <th>AST</th>
+            <th>STL</th>
+            <th>BLK</th>
+            <th>TOV</th>
+            <th>PF</th>
+        </tr>
+
+    {% for item in per_three_six_table %}
+        <tr>
+            <td>{{ item.tournament }}</td>
+            {% if item.age %}
+                <td>{{ item.age }}</td>
+            {% else %}
+                <td>NA</td>
+            {% endif %}
+                <td>{{ item.teams }}</td>
+                <td>{{ item.pos }}</td>
+                <td>{{ item.games_played }}</td>
+                <td>{{ item.games_started }}</td>
+                <td>{{ item.minutes_played }}</td>
+                <td>{{ item.points_scored }}</td>
+                <td>{{ item.fg_made }}</td>
+                <td>{{ item.fg_attempts }}</td>
+                <td>{{ item.fg_percent }}</td>
+                <td>{{ item.three_pt_made }}</td>
+                <td>{{ item.three_pt_attempts }}</td>
+                <td>{{ item.three_pt_percent }}</td>
+                <td>{{ item.ft_made }}</td>
+                <td>{{ item.ft_attempts }}</td>
+                <td>{{ item.ft_percent }}</td>
+                <td>{{ item.offensive_reb }}</td>
+                <td>{{ item.defensive_reb }}</td>
+                <td>{{ item.reb }}</td>
+                <td>{{ item.assists }}</td>
+                <td>{{ item.steals }}</td>
+                <td>{{ item.blocks }}</td>
+                <td>{{ item.turnovers }}</td>
+                <td>{{ item.personal_fouls }}</td>
+        </tr>
+    {% endfor %}
+    </table>
 {% endblock %}

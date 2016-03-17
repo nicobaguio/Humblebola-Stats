@@ -238,6 +238,7 @@ def player_page(request, code, player_id):
 
     total_table = []
     per_game_table = []
+    per_three_six_table = []
 
     for tournament in player_tournaments.order_by('start_date', 'id'):
         current_games = Game.objects.filter(
@@ -274,6 +275,11 @@ def player_page(request, code, player_id):
         total_minutes_played = (Decimal(player_reg_games.aggregate(
             Sum('seconds_played'))['seconds_played__sum']) /
             60).quantize(Decimal(10)**-1)
+
+        if league.id == 1:
+            adjusted_minutes = 36 / total_minutes_played
+        else:
+            adjusted_minutes = 30 / total_minutes_played
 
         total_points_scored = Decimal(player_reg_games.aggregate(
             Sum('ft_made'))['ft_made__sum']) + \
@@ -374,8 +380,8 @@ def player_page(request, code, player_id):
             'games_played': games_played,
             'games_started': games_started,
             'minutes_played': (total_minutes_played /
-                               Decimal(games_played)).quantize(
-                               Decimal(10)**-1),
+                              Decimal(games_played)).quantize(
+                              Decimal(10)**-1),
             'points_scored': (total_points_scored /
                               Decimal(games_played)).quantize(
                               Decimal(10)**-1),
@@ -425,8 +431,56 @@ def player_page(request, code, player_id):
                                Decimal(games_played)).quantize(
                                Decimal(10)**-1)})
 
+        per_three_six_table.append({
+            'tournament': tournament,
+            'age': age,
+            'teams': " / ".join(teams) if len(teams) > 0 else "TOT",
+            'pos': pos,
+            'games_played': games_played,
+            'games_started': games_started,
+            'minutes_played': (total_minutes_played /
+                               Decimal(games_played)).quantize(
+                               Decimal(10)**-1),
+            'points_scored': (adjusted_minutes * total_points_scored).quantize(
+                Decimal(10)**-1),
+            'fg_made': (adjusted_minutes * total_fg_made).quantize(
+                Decimal(10)**-1),
+            'fg_attempts': (adjusted_minutes * total_fg_attempts).quantize(
+                Decimal(10)**-1),
+            'fg_percent': fg_percent,
+            'three_pt_made': (adjusted_minutes * total_three_pt_made).quantize(
+                Decimal(10)**-1),
+            'three_pt_attempts': (adjusted_minutes *
+                                  total_three_pt_attempts).quantize(
+                                  Decimal(10)**-1),
+            'three_pt_percent': three_pt_percent,
+            'ft_made': (adjusted_minutes * total_ft_made).quantize(
+                Decimal(10)**-1),
+            'ft_attempts': (adjusted_minutes * total_ft_attempts).quantize(
+                Decimal(10)**-1),
+            'ft_percent': ft_percent,
+            'offensive_reb': (adjusted_minutes * total_offensive_reb).quantize(
+                Decimal(10)**-1),
+            'defensive_reb': (adjusted_minutes * total_defensive_reb).quantize(
+                Decimal(10)**-1),
+            'reb': (adjusted_minutes *
+                    (total_offensive_reb + total_defensive_reb)).quantize(
+                    Decimal(10)**-1),
+            'assists': (adjusted_minutes * total_assists).quantize(
+                Decimal(10)**-1),
+            'steals': (adjusted_minutes * total_steals).quantize(
+                Decimal(10)**-1),
+            'blocks': (adjusted_minutes * total_blocks).quantize(
+                Decimal(10)**-1),
+            'turnovers': (adjusted_minutes * total_turnovers).quantize(
+                Decimal(10)**-1),
+            'personal_fouls': (adjusted_minutes *
+                               total_personal_fouls).quantize(
+                               Decimal(10)**-1)})
+
     return render(request, 'humblebola/player_page.html', {
         'league': league,
         'player': player,
         'total_table': total_table,
-        'per_game_table': per_game_table})
+        'per_game_table': per_game_table,
+        'per_three_six_table': per_three_six_table})
