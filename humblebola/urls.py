@@ -3,18 +3,29 @@ from django.conf.urls import url, include
 from . import views
 
 player_patterns = [
-    url(r'^$', views.player_home_page, name="home_page"),
+    url(r'^$',
+        views.player_home_page,
+        name="player_home_page"),
     url(r'(?P<player_id>[\d]+)-[\w]+-[\w]+/',
-        views.player_page, name="player_page")
+        views.player_page,
+        name="player_page")
 ]
 
 tournament_patterns = [
-    url(r'^$', views.schedule, name="schedule")
+    url(r'^$',
+        views.schedule,
+        name="schedule")
 ]
 
 team_patterns = [
-    url(r'(?P<team_code>[\w-]+)/', views.team_home_page,
-        name="team_home_page")
+    url(r'(?P<team_code>[\w-]+)/', include([
+        url(r'^$',
+            views.team_home_page,
+            name="team_home_page"),
+        url(r'(?P<tournament_id>[\d]+)',
+            views.team_tournament_page,
+            name="team_tournament_page")
+        ], namespace="team")),
 ]
 
 urlpatterns = [

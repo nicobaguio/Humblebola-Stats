@@ -46,13 +46,13 @@
 
         {% for item in total_table %}
         <tr>
-            <td>{{ item.tournament }}</td>
+            <td>{{ item.tournament.short_name }}</td>
             {% if item.age %}
                 <td>{{ item.age }}</td>
             {% else %}
                 <td>NA</td>
             {% endif %}
-                <td>{{ item.teams }}</td>
+                <td>{{ item.teams.short_name }}</td>
                 <td>{{ item.pos }}</td>
                 <td>{{ item.games_played }}</td>
                 <td>{{ item.games_started }}</td>
@@ -111,7 +111,7 @@
 
         {% for item in per_game_table %}
         <tr>
-            <td>{{ item.tournament }}</td>
+            <td>{{ item.tournament.short_name }}</td>
             {% if item.age %}
                 <td>{{ item.age }}</td>
             {% else %}
@@ -180,7 +180,7 @@
 
     {% for item in per_three_six_table %}
         <tr>
-            <td>{{ item.tournament }}</td>
+            <td>{{ item.tournament.short_name }}</td>
             {% if item.age %}
                 <td>{{ item.age }}</td>
             {% else %}

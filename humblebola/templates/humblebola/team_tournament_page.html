@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>{{ team.team_name }} {{ team.nickname }} Roster and Stats</h1>
+    <h2>{{ tournament.name }}</h2>
+
+    <a href="{% url 'teams:team:team_home_page' league.code team.code %}"><p>Team Home Page</p></a>
+    {% if previous_tournament %}
+        <a href="{% url 'teams:team:team_tournament_page' league.code team.code previous_tournament.id %}"><p><< {{ previous_tournament.name }}</p></a>
+    {% endif %}
+    {% if next_tournament %}
+        <a href="{% url 'teams:team:team_tournament_page' league.code team.code next_tournament.id %}"><p>{{ next_tournament.name }} >></p></a>
+    {% endif %}
+    <p>Record: {{ record.win }}-{{ record.loss }}</p>
+    <p>ORTG: {{ ortg }}</p>
+    <p>DRTG: {{ drtg }}</p>
+
+    <table>
+        <tr>
+            <th>No.</th>
+            <th>Player</th>
+            <th>Pos</th>
+            <th>Ht</th>
+            <th>Wt</th>
+            <th>Birth Date</th>
+            {% if league.id == 1 %}
+                <th>College</th>
+                <th>High School</th>
+            {% else %}
+                <th>High School</th>
+            {% endif %}
+        </tr>
+        {% for player in players %}
+            <tr>
+                <td>{{ player.current_jersey_number }}</td>
+                <td>{{ player.first_name }} {{ player.last_name }}</td>
+                <td>{{ player.position }}</td>
+                <td>{{ player.get_height }}</td>
+                <td>{{ player.weight }} lbs.</td>
+                {% if player.birthday %}
+                    <td>{{ player.birthday }}</td>
+                {% else %}
+                    <td>NA</td>
+                {% endif %}
+
+                {% if league.id == 1 %}
+                    <td>{{ player.college }}</td>
+                    <td>{{ player.high_school }}</td>
+                {% else %}
+                    <td>{{ player.highschool }}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
