@@ -1,4 +1,3 @@
-from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse, resolve
 from django import template
 from humblebola.models import *
@@ -17,6 +16,28 @@ def team_nav_bar(context):
         league_id=league.id,
         schedule__gt=tournament.start_date,
         schedule__lt=tournament.end_date)
+
+    child_tournaments = Tournament.objects.filter(
+        league_id=league.id,
+        id__in=PlayerTournamentTeam.objects.filter(
+            team_id=team.id).distinct('tournament_id').values('tournament_id'))
+
+    parent_tournaments = Tournament.objects.filter(
+        id__in=Tournament.objects.filter(
+            league_id=league.id,
+            id__in=PlayerTournamentTeam.objects.filter(
+                team_id=team.id).distinct(
+                'tournament_id').values(
+                'tournament_id')).values_list('parent_id', flat=True))
+
+    team_tournaments = child_tournaments | parent_tournaments
+
+    tournaments_table = []
+    for tournament in team_tournaments.order_by('start_date', 'id'):
+        tournaments_table.append({'tournament': tournament})
+
+    # Handle context based previous & next tournament link. Built-in handler
+    # for PBA so it doesn't include parent tournament.
 
     if league.id == 1:
         try:
@@ -93,6 +114,7 @@ def team_nav_bar(context):
             'next_tournament': next_tournament,
             'previous_tournament_link': previous_tournament_link,
             'next_tournament_link': next_tournament_link,
+            'tournaments_table': tournaments_table,
             'record': record,
             'pace': pace,
             'ortg': ortg,
