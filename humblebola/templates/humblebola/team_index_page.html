@@ -4,6 +4,7 @@
 <h1>{{ team.team_name }} {{ team.nickname }}</h1>
 <h2>{{ seasons|length }} Seasons</h2>
 
+
 <table>
     <tr>
         <th>Season</th>
@@ -24,7 +25,7 @@
             {% if league.id == 1 and item.tournament.parent_id == null %}
                 <td>{{ item.tournament.short_name }}</td>
             {% else %}
-                <td><a href="{% url 'teams:team:team_tournament_page' league.code team.code item.tournament.id %}">{{ item.tournament.short_name }}</a></td>
+                <td><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code item.tournament.id %}">{{ item.tournament.short_name }}</a></td>
             {% endif %}
             <td>{{ item.win }}</td>
             <td>{{ item.loss }}</td>

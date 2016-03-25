@@ -1,0 +1,11 @@
+<a href="{% url 'teams:team:index' league.code team.code %}"><p>Team Index Page</p></a>
+{% if previous_tournament_link %}
+    <a href="{{ previous_tournament_link }}"><p><< {{ previous_tournament.name }}</p></a>
+{% endif %}
+{% if next_tournament_link %}
+    <a href="{{ next_tournament_link }}"><p>{{ next_tournament.name }} >></p></a>
+{% endif %}
+{{ request.get_full_path }}
+<p>Record: {{ record.win }}-{{ record.loss }}</p>
+<p>ORTG: {{ ortg }}</p>
+<p>DRTG: {{ drtg }}</p>

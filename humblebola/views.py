@@ -1,11 +1,8 @@
 from django.shortcuts import get_object_or_404, render, redirect
 
-from django.db.models import Sum
 from .models import *
 
 from datetime import date, datetime, time
-
-from decimal import Decimal
 
 from humblebola import analytics
 # Create your views here.
@@ -135,7 +132,7 @@ def schedule(request, code, tournament_id=None):
         'teams': Team.objects.filter(league_id=league.id)})
 
 
-def team_home_page(request, code, team_code):
+def team_index_page(request, code, team_code):
     league = get_object_or_404(League, code=code)
     team = get_object_or_404(Team, code=team_code)
     child_tournaments = Tournament.objects.filter(
@@ -167,25 +164,25 @@ def team_home_page(request, code, team_code):
         win_p = wins_and_losses['win_p']
         pace = analytics.get_pace(current_games.filter(game_type=0), team)
         rel_pace = analytics.get_pace(current_games.filter(game_type=0)) - pace
-        ortg = analytics.get_team_ratings(current_games.filter(
+        ortg = analytics.get_eff_ratings(current_games.filter(
             game_type=0), 'off', team)
-        drtg = analytics.get_team_ratings(current_games.filter(
+        drtg = analytics.get_eff_ratings(current_games.filter(
             game_type=0), 'def', team)
-        rtg = analytics.get_team_ratings(current_games.filter(
+        rtg = analytics.get_eff_ratings(current_games.filter(
             game_type=0))
 
         table.append({'tournament': tournament,
-                          'win': win,
-                          'loss': loss,
-                          'win_p': win_p,
-                          'pace': pace,
-                          'rel_pace': rel_pace,
-                          'ortg': ortg,
-                          'rel_ortg': ortg - rtg,
-                          'drtg': drtg,
-                          'rel_drtg': drtg - rtg})
+                      'win': win,
+                      'loss': loss,
+                      'win_p': win_p,
+                      'pace': pace,
+                      'rel_pace': rel_pace,
+                      'ortg': ortg,
+                      'rel_ortg': ortg - rtg,
+                      'drtg': drtg,
+                      'rel_drtg': drtg - rtg})
 
-    return render(request, 'humblebola/team_home_page.html', {
+    return render(request, 'humblebola/team_index_page.html', {
         'league': league,
         'team': team,
         'seasons': parent_tournaments if code == 'pba' else child_tournaments,
@@ -363,8 +360,8 @@ def team_tournament_page(request, code, team_code, tournament_id):
 
     record = analytics.get_wins_losses(games, team)
     pace = analytics.get_pace(games, team)
-    ortg = analytics.get_team_ratings(games.filter(game_type=0), 'off', team)
-    drtg = analytics.get_team_ratings(games.filter(game_type=0), 'def', team)
+    ortg = analytics.get_eff_ratings(games.filter(game_type=0), 'off', team)
+    drtg = analytics.get_eff_ratings(games.filter(game_type=0), 'def', team)
 
     return render(request, 'humblebola/team_tournament_page.html', {
         'league': league,
@@ -377,4 +374,36 @@ def team_tournament_page(request, code, team_code, tournament_id):
         'ortg': ortg,
         'drtg': drtg,
         'players': players,
+        })
+
+
+def team_schedule_page(request, code, team_code, tournament_id):
+    league = get_object_or_404(League, code=code)
+    team = get_object_or_404(Team, code=team_code)
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+    child_tournaments = Tournament.objects.filter(
+        league_id=league.id,
+        id__in=PlayerTournamentTeam.objects.filter(
+            team_id=team.id).distinct('tournament_id').values('tournament_id'))
+
+    parent_tournaments = Tournament.objects.filter(
+        id__in=Tournament.objects.filter(
+            league_id=league.id,
+            id__in=PlayerTournamentTeam.objects.filter(
+                team_id=team.id).distinct(
+                'tournament_id').values(
+                'tournament_id')).values_list('parent_id', flat=True))
+
+    games = Game.objects.filter(
+        league_id=league.id,
+        schedule__gt=tournament.start_date,
+        schedule__lt=tournament.end_date)
+
+    return render(request, 'humblebola/team_schedule_page.html', {
+        'league': league,
+        'team': team,
+        'tournament': tournament,
+        'seasons': parent_tournaments if code == 'pba' else child_tournaments,
+        'regular_games': games.filter(game_type=0),
+        'playoff_games': games.filter(game_type=1),
         })

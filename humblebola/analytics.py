@@ -3,9 +3,11 @@ from django.db.models import F, Sum, Avg
 
 from humblebola.models import *
 
+# Returns a dict of wins/losses/win_p of a team in a given set of games.
+
 
 def get_wins_losses(games, team):
-    # Gets wins and losses for a team in the games
+
     win = games.filter(
         game_type=0,
         home_team_id=team.id,
@@ -32,9 +34,12 @@ def get_wins_losses(games, team):
         'win_p': win_p,
     }
 
+# Returns the pace (poss/regular game [48 for PBA, 40 otherwise])
+# in a given set of games.
+
 
 def get_pace(games, team=None):
-    # Get pace for a given set of games and team
+
     if team:
         league = League.objects.get(id=team.league.id)
         team_games = games.filter(
@@ -133,8 +138,10 @@ def get_pace(games, team=None):
                 league_seconds_played) /
                 game_stats.count()).quantize(Decimal(10)**-1)
 
+# Returns a rating [off/def] of a team OR a league in a given set of games.
 
-def get_team_ratings(games, rating=None, team=None):
+
+def get_eff_ratings(games, rating=None, team=None):
     if team:
         team_games = games.filter(
             home_team_id=team.id) | games.filter(
@@ -234,6 +241,9 @@ def get_team_ratings(games, rating=None, team=None):
                 Sum('three_pt_made'))['three_pt_made__sum'])
 
         return (100 * points / poss).quantize(Decimal(10) ** -1)
+
+# Return a dict of a player's totals/per game/per-36/adv in either
+# regular or playoff games.
 
 
 def get_player_stat(games, player, table_type, game_type=0):
@@ -451,6 +461,5 @@ def get_player_stat(games, player, table_type, game_type=0):
                                total_personal_fouls).quantize(
                                Decimal(10)**-1)
             })
-
 # 60 = seconds per minute
 # 5 = 5 players on the court

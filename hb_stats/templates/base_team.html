@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load team_nav_tags %}
+
+{% block content %}
+    <h1>{{ team.team_name }} {{ team.nickname }} Roster and Stats</h1>
+    <h2>{{ tournament.name }}</h2>
+    {% team_nav_bar %}
+=======================================
+{% block section %}
+{% endblock %}
+
+{% endblock %}

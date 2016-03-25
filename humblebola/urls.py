@@ -20,11 +20,17 @@ tournament_patterns = [
 team_patterns = [
     url(r'(?P<team_code>[\w-]+)/', include([
         url(r'^$',
-            views.team_home_page,
-            name="team_home_page"),
-        url(r'(?P<tournament_id>[\d]+)',
-            views.team_tournament_page,
-            name="team_tournament_page")
+            views.team_index_page,
+            name="index"),
+        url(r'(?P<tournament_id>[\d]+)/', include([
+            url(r'^$',
+                views.team_tournament_page,
+                name="tournament_page"),
+            url(r'games/',
+                views.team_schedule_page,
+                name="schedule")],
+            namespace="tournament")
+            ),
         ], namespace="team")),
 ]
 

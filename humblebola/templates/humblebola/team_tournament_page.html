@@ -1,19 +1,5 @@
-{% extends "base.html" %}
-{% block content %}
-    <h1>{{ team.team_name }} {{ team.nickname }} Roster and Stats</h1>
-    <h2>{{ tournament.name }}</h2>
-
-    <a href="{% url 'teams:team:team_home_page' league.code team.code %}"><p>Team Home Page</p></a>
-    {% if previous_tournament %}
-        <a href="{% url 'teams:team:team_tournament_page' league.code team.code previous_tournament.id %}"><p><< {{ previous_tournament.name }}</p></a>
-    {% endif %}
-    {% if next_tournament %}
-        <a href="{% url 'teams:team:team_tournament_page' league.code team.code next_tournament.id %}"><p>{{ next_tournament.name }} >></p></a>
-    {% endif %}
-    <p>Record: {{ record.win }}-{{ record.loss }}</p>
-    <p>ORTG: {{ ortg }}</p>
-    <p>DRTG: {{ drtg }}</p>
-
+{% extends "base_team.html" %}
+{% block section %}
     <table>
         <tr>
             <th>No.</th>
@@ -50,9 +36,5 @@
                 {% endif %}
             </tr>
         {% endfor %}
-    </table>
-
-    <table>
-
     </table>
 {% endblock %}
