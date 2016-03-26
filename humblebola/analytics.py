@@ -246,6 +246,93 @@ def get_eff_ratings(games, rating=None, team=None):
 # regular or playoff games.
 
 
+def get_stat(games):
+
+    total_points_scored = Decimal(games.aggregate(
+        Sum('ft_made'))['ft_made__sum']) + \
+        Decimal(games.aggregate(
+            Sum('fg_made'))['fg_made__sum']) * 2 + \
+        Decimal(games.aggregate(
+            Sum('three_pt_made'))['three_pt_made__sum'])
+
+    total_fg_made = Decimal(games.aggregate(
+        Sum('fg_made'))['fg_made__sum'])
+
+    total_fg_attempts = Decimal(games.aggregate(
+        Sum('fg_attempts'))['fg_attempts__sum'])
+
+    if total_fg_attempts > 0:
+        fg_percent = ((total_fg_made/total_fg_attempts) *
+                      100).quantize(Decimal(10)**-1)
+    else:
+        fg_percent = Decimal(0.0).quantize(Decimal(10)**-1)
+
+    total_three_pt_made = Decimal(games.aggregate(
+        Sum('three_pt_made'))['three_pt_made__sum'])
+
+    total_three_pt_attempts = Decimal(games.aggregate(
+        Sum('three_pt_attempts'))['three_pt_attempts__sum'])
+
+    if total_three_pt_attempts > 0:
+        three_pt_percent = ((total_three_pt_made/total_three_pt_attempts) *
+                            100).quantize(Decimal(10)**-1)
+    else:
+        three_pt_percent = Decimal(0.0).quantize(Decimal(10)**-1)
+
+    total_ft_made = Decimal(games.aggregate(
+        Sum('ft_made'))['ft_made__sum'])
+
+    total_ft_attempts = Decimal(games.aggregate(
+        Sum('ft_attempts'))['ft_attempts__sum'])
+
+    if total_ft_attempts > 0:
+        ft_percent = ((total_ft_made/total_ft_attempts) *
+                      100).quantize(Decimal(10)**-1)
+    else:
+        ft_percent = Decimal(0.0).quantize(Decimal(10)**-1)
+
+    total_offensive_reb = Decimal(games.aggregate(
+        Sum('offensive_reb'))['offensive_reb__sum'])
+
+    total_defensive_reb = Decimal(games.aggregate(
+        Sum('defensive_reb'))['defensive_reb__sum'])
+
+    total_assists = Decimal(games.aggregate(
+        Sum('assists'))['assists__sum'])
+
+    total_steals = Decimal(games.aggregate(
+        Sum('steals'))['steals__sum'])
+
+    total_blocks = Decimal(games.aggregate(
+        Sum('blocks'))['blocks__sum'])
+
+    total_turnovers = Decimal(games.aggregate(
+        Sum('turnovers'))['turnovers__sum'])
+
+    total_personal_fouls = Decimal(games.aggregate(
+        Sum('personal_fouls'))['personal_fouls__sum'])
+
+    return ({
+        'total_points_scored': total_points_scored,
+        'total_fg_made': total_fg_made,
+        'total_fg_attempts': total_fg_attempts,
+        'fg_percent': fg_percent,
+        'total_three_pt_made': total_three_pt_made,
+        'total_three_pt_attempts': total_three_pt_attempts,
+        'three_pt_percent': three_pt_percent,
+        'total_ft_made': total_ft_made,
+        'total_ft_attempts': total_ft_attempts,
+        'ft_percent': ft_percent,
+        'total_offensive_reb': total_offensive_reb,
+        'total_defensive_reb': total_defensive_reb,
+        'total_assists': total_assists,
+        'total_steals': total_steals,
+        'total_blocks': total_blocks,
+        'total_turnovers': total_turnovers,
+        'total_personal_fouls': total_personal_fouls,
+        })
+
+
 def get_player_stat(games, player, table_type, game_type=0):
     league = player.current_league
     player_games = GamePlayerStat.objects.filter(
@@ -267,93 +354,32 @@ def get_player_stat(games, player, table_type, game_type=0):
     else:
         adjusted_minutes = 30 / total_minutes_played
 
-    total_points_scored = Decimal(player_games.aggregate(
-        Sum('ft_made'))['ft_made__sum']) + \
-        Decimal(player_games.aggregate(
-            Sum('fg_made'))['fg_made__sum']) * 2 + \
-        Decimal(player_games.aggregate(
-            Sum('three_pt_made'))['three_pt_made__sum'])
-
-    total_fg_made = Decimal(player_games.aggregate(
-        Sum('fg_made'))['fg_made__sum'])
-
-    total_fg_attempts = Decimal(player_games.aggregate(
-        Sum('fg_attempts'))['fg_attempts__sum'])
-
-    if total_fg_attempts > 0:
-        fg_percent = ((total_fg_made/total_fg_attempts) *
-                      100).quantize(Decimal(10)**-1)
-    else:
-        fg_percent = Decimal(0.0).quantize(Decimal(10)**-1)
-
-    total_three_pt_made = Decimal(player_games.aggregate(
-        Sum('three_pt_made'))['three_pt_made__sum'])
-
-    total_three_pt_attempts = Decimal(player_games.aggregate(
-        Sum('three_pt_attempts'))['three_pt_attempts__sum'])
-
-    if total_three_pt_attempts > 0:
-        three_pt_percent = ((total_three_pt_made/total_three_pt_attempts) *
-                            100).quantize(Decimal(10)**-1)
-    else:
-        three_pt_percent = Decimal(0.0).quantize(Decimal(10)**-1)
-
-    total_ft_made = Decimal(player_games.aggregate(
-        Sum('ft_made'))['ft_made__sum'])
-
-    total_ft_attempts = Decimal(player_games.aggregate(
-        Sum('ft_attempts'))['ft_attempts__sum'])
-
-    if total_ft_attempts > 0:
-        ft_percent = ((total_ft_made/total_ft_attempts) *
-                      100).quantize(Decimal(10)**-1)
-    else:
-        ft_percent = Decimal(0.0).quantize(Decimal(10)**-1)
-
-    total_offensive_reb = Decimal(player_games.aggregate(
-        Sum('offensive_reb'))['offensive_reb__sum'])
-
-    total_defensive_reb = Decimal(player_games.aggregate(
-        Sum('defensive_reb'))['defensive_reb__sum'])
-
-    total_assists = Decimal(player_games.aggregate(
-        Sum('assists'))['assists__sum'])
-
-    total_steals = Decimal(player_games.aggregate(
-        Sum('steals'))['steals__sum'])
-
-    total_blocks = Decimal(player_games.aggregate(
-        Sum('blocks'))['blocks__sum'])
-
-    total_turnovers = Decimal(player_games.aggregate(
-        Sum('turnovers'))['turnovers__sum'])
-
-    total_personal_fouls = Decimal(player_games.aggregate(
-        Sum('personal_fouls'))['personal_fouls__sum'])
+    player_stat = get_stat(player_games)
 
     if table_type == 'totals':
         return ({
             'games_played': games_played,
             'games_started': games_started,
             'minutes_played': total_minutes_played,
-            'points_scored': total_points_scored,
-            'fg_made': total_fg_made,
-            'fg_attempts': total_fg_attempts,
-            'fg_percent': fg_percent,
-            'three_pt_made': total_three_pt_made,
-            'three_pt_attempts': total_three_pt_attempts,
-            'three_pt_percent': three_pt_percent,
-            'ft_made': total_ft_made,
-            'ft_attempts': total_ft_attempts,
-            'ft_percent': ft_percent,
-            'offensive_reb': total_offensive_reb,
-            'defensive_reb': total_defensive_reb,
-            'reb': total_offensive_reb + total_defensive_reb,
-            'assists': total_assists,
-            'steals': total_steals,
-            'blocks': total_blocks,
-            'turnovers': total_turnovers,
-            'personal_fouls': total_personal_fouls
+            'points_scored': player_stat['total_points_scored'],
+            'fg_made': player_stat['total_fg_made'],
+            'fg_attempts': player_stat['total_fg_attempts'],
+            'fg_percent': player_stat['fg_percent'],
+            'three_pt_made': player_stat['total_three_pt_made'],
+            'three_pt_attempts': player_stat['total_three_pt_attempts'],
+            'three_pt_percent': player_stat['three_pt_percent'],
+            'ft_made': player_stat['total_ft_made'],
+            'ft_attempts': player_stat['total_ft_attempts'],
+            'ft_percent': player_stat['ft_percent'],
+            'offensive_reb': player_stat['total_offensive_reb'],
+            'defensive_reb': player_stat['total_defensive_reb'],
+            'reb': player_stat['total_offensive_reb'] +
+            player_stat['total_defensive_reb'],
+            'assists': player_stat['total_assists'],
+            'steals': player_stat['total_steals'],
+            'blocks': player_stat['total_blocks'],
+            'turnovers': player_stat['total_turnovers'],
+            'personal_fouls': player_stat['total_personal_fouls']
             })
 
     elif table_type == 'per_game':
@@ -363,52 +389,53 @@ def get_player_stat(games, player, table_type, game_type=0):
             'minutes_played': (total_minutes_played /
                                Decimal(games_played)).quantize(
                                Decimal(10)**-1),
-            'points_scored': (total_points_scored /
+            'points_scored': (player_stat['total_points_scored'] /
                               Decimal(games_played)).quantize(
                               Decimal(10)**-1),
-            'fg_made': (total_fg_made /
+            'fg_made': (player_stat['total_fg_made'] /
                         Decimal(games_played)).quantize(
                         Decimal(10)**-1),
-            'fg_attempts': (total_fg_attempts /
+            'fg_attempts': (player_stat['total_fg_attempts'] /
                             Decimal(games_played)).quantize(
                             Decimal(10)**-1),
-            'fg_percent': fg_percent,
-            'three_pt_made': (total_three_pt_made /
+            'fg_percent': player_stat['fg_percent'],
+            'three_pt_made': (player_stat['total_three_pt_made'] /
                               Decimal(games_played)).quantize(
                               Decimal(10)**-1),
-            'three_pt_attempts': (total_three_pt_attempts /
+            'three_pt_attempts': (player_stat['total_three_pt_attempts'] /
                                   Decimal(games_played)).quantize(
                                   Decimal(10)**-1),
-            'three_pt_percent': three_pt_percent,
-            'ft_made': (total_ft_made /
+            'three_pt_percent': player_stat['three_pt_percent'],
+            'ft_made': (player_stat['total_ft_made'] /
                         Decimal(games_played)).quantize(
                         Decimal(10)**-1),
-            'ft_attempts': (total_ft_attempts /
+            'ft_attempts': (player_stat['total_ft_attempts'] /
                             Decimal(games_played)).quantize(
                             Decimal(10)**-1),
-            'ft_percent': ft_percent,
-            'offensive_reb': (total_offensive_reb /
+            'ft_percent': player_stat['ft_percent'],
+            'offensive_reb': (player_stat['total_offensive_reb'] /
                               Decimal(games_played)).quantize(
                               Decimal(10)**-1),
-            'defensive_reb': (total_defensive_reb /
+            'defensive_reb': (player_stat['total_defensive_reb'] /
                               Decimal(games_played)).quantize(
                               Decimal(10)**-1),
-            'reb': ((total_offensive_reb + total_defensive_reb) /
+            'reb': ((player_stat['total_offensive_reb'] +
+                     player_stat['total_defensive_reb']) /
                     Decimal(games_played)).quantize(
                     Decimal(10)**-1),
-            'assists': (total_assists /
+            'assists': (player_stat['total_assists'] /
                                   Decimal(games_played)).quantize(
                                   Decimal(10)**-1),
-            'steals': (total_steals /
+            'steals': (player_stat['total_steals'] /
                        Decimal(games_played)).quantize(
                        Decimal(10)**-1),
-            'blocks': (total_blocks /
+            'blocks': (player_stat['total_blocks'] /
                        Decimal(games_played)).quantize(
                        Decimal(10)**-1),
-            'turnovers': (total_turnovers /
+            'turnovers': (player_stat['total_turnovers'] /
                           Decimal(games_played)).quantize(
                           Decimal(10)**-1),
-            'personal_fouls': (total_personal_fouls /
+            'personal_fouls': (player_stat['total_personal_fouls'] /
                                Decimal(games_played)).quantize(
                                Decimal(10)**-1)
             })
@@ -421,45 +448,285 @@ def get_player_stat(games, player, table_type, game_type=0):
                                Decimal(games_played)).quantize(
                                Decimal(10)**-1),
             'points_scored': (adjusted_minutes *
-                              total_points_scored).quantize(
+                              player_stat['total_points_scored']).quantize(
                 Decimal(10)**-1),
-            'fg_made': (adjusted_minutes * total_fg_made).quantize(
+            'fg_made': (adjusted_minutes *
+                        player_stat['total_fg_made']).quantize(
                 Decimal(10)**-1),
-            'fg_attempts': (adjusted_minutes * total_fg_attempts).quantize(
+            'fg_attempts': (adjusted_minutes *
+                            player_stat['total_fg_attempts']).quantize(
                 Decimal(10)**-1),
-            'fg_percent': fg_percent,
+            'fg_percent': player_stat['fg_percent'],
             'three_pt_made': (adjusted_minutes *
-                              total_three_pt_made).quantize(
+                              player_stat['total_three_pt_made']).quantize(
                 Decimal(10)**-1),
             'three_pt_attempts': (adjusted_minutes *
-                                  total_three_pt_attempts).quantize(
+                                  player_stat['total_three_pt_attempts']
+                                  ).quantize(
                                   Decimal(10)**-1),
-            'three_pt_percent': three_pt_percent,
-            'ft_made': (adjusted_minutes * total_ft_made).quantize(
-                Decimal(10)**-1),
-            'ft_attempts': (adjusted_minutes * total_ft_attempts).quantize(
-                Decimal(10)**-1),
-            'ft_percent': ft_percent,
+            'three_pt_percent': player_stat['three_pt_percent'],
+            'ft_made': (adjusted_minutes * player_stat['total_ft_made']
+                        ).quantize(Decimal(10)**-1),
+            'ft_attempts': (adjusted_minutes * player_stat['total_ft_attempts']
+                            ).quantize(Decimal(10)**-1),
+            'ft_percent': player_stat['ft_percent'],
             'offensive_reb': (adjusted_minutes *
-                              total_offensive_reb).quantize(
+                              player_stat['total_offensive_reb']).quantize(
                               Decimal(10)**-1),
             'defensive_reb': (adjusted_minutes *
-                              total_defensive_reb).quantize(
+                              player_stat['total_defensive_reb']).quantize(
                               Decimal(10)**-1),
             'reb': (adjusted_minutes *
-                    (total_offensive_reb + total_defensive_reb)).quantize(
+                    (player_stat['total_offensive_reb'] +
+                        player_stat['total_defensive_reb'])).quantize(
                     Decimal(10)**-1),
-            'assists': (adjusted_minutes * total_assists).quantize(
-                Decimal(10)**-1),
-            'steals': (adjusted_minutes * total_steals).quantize(
-                Decimal(10)**-1),
-            'blocks': (adjusted_minutes * total_blocks).quantize(
-                Decimal(10)**-1),
-            'turnovers': (adjusted_minutes * total_turnovers).quantize(
-                Decimal(10)**-1),
+            'assists': (adjusted_minutes * player_stat['total_assists']
+                        ).quantize(Decimal(10)**-1),
+            'steals': (adjusted_minutes * player_stat['total_steals']
+                       ).quantize(Decimal(10)**-1),
+            'blocks': (adjusted_minutes * player_stat['total_blocks']
+                       ).quantize(Decimal(10)**-1),
+            'turnovers': (adjusted_minutes *
+                          player_stat['total_turnovers']
+                          ).quantize(Decimal(10)**-1),
             'personal_fouls': (adjusted_minutes *
-                               total_personal_fouls).quantize(
+                               player_stat['total_personal_fouls']).quantize(
                                Decimal(10)**-1)
             })
 # 60 = seconds per minute
 # 5 = 5 players on the court
+
+
+def get_team_stat(games, team, table_type, team_type='team', game_type=0):
+    team_games = GameTeamStat.objects.filter(
+        team_id=team.id,
+        game_id__in=games.filter(
+            game_type=game_type).values_list('id', flat=True),
+        seconds_played__gt=0)
+
+    opp_team_games = GameTeamStat.objects.filter(
+        opp_team_id=team.id,
+        game_id__in=games.filter(
+            game_type=game_type).values_list('id', flat=True),
+        seconds_played__gt=0)
+
+    games_played = team_games.count()
+
+    team_total_minutes_played = (Decimal(team_games.aggregate(
+        Sum('seconds_played'))['seconds_played__sum']) /
+        60).quantize(Decimal(10)**-1)
+
+    opp_team_total_minutes_played = (Decimal(opp_team_games.aggregate(
+        Sum('seconds_played'))['seconds_played__sum']) /
+        60).quantize(Decimal(10)**-1)
+
+    team_stats = get_stat(team_games)
+    opp_team_stats = get_stat(opp_team_games)
+
+    team_total_reb = team_stats['total_offensive_reb'] + \
+        team_stats['total_defensive_reb']
+
+    opp_team_total_reb = opp_team_stats['total_offensive_reb'] + \
+        opp_team_stats['total_defensive_reb']
+
+    team_stats.update({
+        'total_games_played': games_played,
+        'total_minutes_played': team_total_minutes_played,
+        'reb': team_total_reb,
+        })
+
+    opp_team_stats.update({
+        'total_games_played': games_played,
+        'total_minutes_played': opp_team_total_minutes_played,
+        'reb': opp_team_total_reb,
+        })
+
+    if table_type == 'totals':
+        if team_type == 'team':
+            return team_stats
+        else:
+            return opp_team_stats
+
+    elif table_type == 'per_game':
+        if team_type == 'team':
+            return ({
+                'games_played': games_played,
+                'minutes_played': (team_total_minutes_played /
+                                   Decimal(games_played)).quantize(
+                                   Decimal(10)**-1),
+                'points_scored': (team_stats['total_points_scored'] /
+                                  Decimal(games_played)).quantize(
+                                  Decimal(10)**-1),
+                'fg_made': (team_stats['total_fg_made'] /
+                            Decimal(games_played)).quantize(
+                            Decimal(10)**-1),
+                'fg_attempts': (team_stats['total_fg_attempts'] /
+                                Decimal(games_played)).quantize(
+                                Decimal(10)**-1),
+                'fg_percent': team_stats['fg_percent'],
+                'three_pt_made': (team_stats['total_three_pt_made'] /
+                                  Decimal(games_played)).quantize(
+                                  Decimal(10)**-1),
+                'three_pt_attempts': (team_stats['total_three_pt_attempts'] /
+                                      Decimal(games_played)).quantize(
+                                      Decimal(10)**-1),
+                'three_pt_percent': team_stats['three_pt_percent'],
+                'ft_made': (team_stats['total_ft_made'] /
+                            Decimal(games_played)).quantize(
+                            Decimal(10)**-1),
+                'ft_attempts': (team_stats['total_ft_attempts'] /
+                                Decimal(games_played)).quantize(
+                                Decimal(10)**-1),
+                'ft_percent': team_stats['ft_percent'],
+                'offensive_reb': (team_stats['total_offensive_reb'] /
+                                  Decimal(games_played)).quantize(
+                                  Decimal(10)**-1),
+                'defensive_reb': (team_stats['total_defensive_reb'] /
+                                  Decimal(games_played)).quantize(
+                                  Decimal(10)**-1),
+                'reb': ((team_stats['total_offensive_reb'] +
+                         team_stats['total_defensive_reb']) /
+                        Decimal(games_played)).quantize(
+                        Decimal(10)**-1),
+                'assists': (team_stats['total_assists'] /
+                                      Decimal(games_played)).quantize(
+                                      Decimal(10)**-1),
+                'steals': (team_stats['total_steals'] /
+                           Decimal(games_played)).quantize(
+                           Decimal(10)**-1),
+                'blocks': (team_stats['total_blocks'] /
+                           Decimal(games_played)).quantize(
+                           Decimal(10)**-1),
+                'turnovers': (team_stats['total_turnovers'] /
+                              Decimal(games_played)).quantize(
+                              Decimal(10)**-1),
+                'personal_fouls': (team_stats['total_personal_fouls'] /
+                                   Decimal(games_played)).quantize(
+                                   Decimal(10)**-1)
+                })
+        else:
+            return ({
+                'games_played': games_played,
+                'minutes_played': (opp_team_total_minutes_played /
+                                   Decimal(games_played)).quantize(
+                                   Decimal(10)**-1),
+                'points_scored': (opp_team_stats['total_points_scored'] /
+                                  Decimal(games_played)).quantize(
+                                  Decimal(10)**-1),
+                'fg_made': (opp_team_stats['total_fg_made'] /
+                            Decimal(games_played)).quantize(
+                            Decimal(10)**-1),
+                'fg_attempts': (opp_team_stats['total_fg_attempts'] /
+                                Decimal(games_played)).quantize(
+                                Decimal(10)**-1),
+                'fg_percent': opp_team_stats['fg_percent'],
+                'three_pt_made': (opp_team_stats['total_three_pt_made'] /
+                                  Decimal(games_played)).quantize(
+                                  Decimal(10)**-1),
+                'three_pt_attempts': (opp_team_stats[
+                    'total_three_pt_attempts'] /
+                                      Decimal(games_played)).quantize(
+                                      Decimal(10)**-1),
+                'three_pt_percent': opp_team_stats['three_pt_percent'],
+                'ft_made': (opp_team_stats['total_ft_made'] /
+                            Decimal(games_played)).quantize(
+                            Decimal(10)**-1),
+                'ft_attempts': (opp_team_stats['total_ft_attempts'] /
+                                Decimal(games_played)).quantize(
+                                Decimal(10)**-1),
+                'ft_percent': opp_team_stats['ft_percent'],
+                'offensive_reb': (opp_team_stats['total_offensive_reb'] /
+                                  Decimal(games_played)).quantize(
+                                  Decimal(10)**-1),
+                'defensive_reb': (opp_team_stats['total_defensive_reb'] /
+                                  Decimal(games_played)).quantize(
+                                  Decimal(10)**-1),
+                'reb': ((opp_team_stats['total_offensive_reb'] +
+                         opp_team_stats['total_defensive_reb']) /
+                        Decimal(games_played)).quantize(
+                        Decimal(10)**-1),
+                'assists': (opp_team_stats['total_assists'] /
+                                      Decimal(games_played)).quantize(
+                                      Decimal(10)**-1),
+                'steals': (opp_team_stats['total_steals'] /
+                           Decimal(games_played)).quantize(
+                           Decimal(10)**-1),
+                'blocks': (opp_team_stats['total_blocks'] /
+                           Decimal(games_played)).quantize(
+                           Decimal(10)**-1),
+                'turnovers': (opp_team_stats['total_turnovers'] /
+                              Decimal(games_played)).quantize(
+                              Decimal(10)**-1),
+                'personal_fouls': (opp_team_stats['total_personal_fouls'] /
+                                   Decimal(games_played)).quantize(
+                                   Decimal(10)**-1)
+                })
+
+    elif table_type == 'adv':
+        ortg = get_eff_ratings(games.filter(game_type=0), 'off', team)
+        drtg = get_eff_ratings(games.filter(game_type=0), 'def', team)
+
+        o_efg = (100*((Decimal(team_stats['total_fg_made']) +
+                      (Decimal(team_stats['total_three_pt_made'])/2)) /
+                      Decimal(team_stats['total_fg_attempts']))).quantize(
+                    Decimal(10)**-1)
+
+        d_efg = (100*((Decimal(opp_team_stats['total_fg_made']) +
+                      (Decimal(opp_team_stats['total_three_pt_made'])/2)) /
+                      Decimal(opp_team_stats['total_fg_attempts']))).quantize(
+                    Decimal(10)**-1)
+
+        o_tov = (100*Decimal(team_stats['total_turnovers']) /
+                 (Decimal(team_stats['total_fg_attempts']) +
+                 (Decimal(0.44) * Decimal(team_stats['total_ft_attempts'])) +
+                 Decimal(team_stats['total_turnovers']))).quantize(
+                Decimal(10)**-1)
+
+        d_tov = (100*Decimal(opp_team_stats['total_turnovers']) /
+                 (Decimal(opp_team_stats['total_fg_attempts']) +
+                 (Decimal(0.44) * Decimal(
+                    opp_team_stats['total_ft_attempts'])) +
+                 Decimal(opp_team_stats['total_turnovers']))).quantize(
+                Decimal(10)**-1)
+
+        o_orb = (100 * Decimal(team_stats['total_offensive_reb']) /
+                 (Decimal(team_stats['total_offensive_reb']) +
+                  Decimal(opp_team_stats['total_defensive_reb']))).quantize(
+                Decimal(10)**-1)
+
+        d_orb = (100 * Decimal(opp_team_stats['total_offensive_reb']) /
+                 (Decimal(opp_team_stats['total_offensive_reb']) +
+                  Decimal(team_stats['total_defensive_reb']))).quantize(
+                Decimal(10)**-1)
+
+        o_ftp = (100 * Decimal(team_stats['total_ft_made']) /
+                 Decimal(team_stats['total_fg_attempts'])).quantize(
+                 Decimal(10)**-1)
+
+        d_ftp = (100 * Decimal(opp_team_stats['total_ft_made']) /
+                 Decimal(opp_team_stats['total_fg_attempts'])).quantize(
+                 Decimal(10)**-1)
+
+        return ({
+            'three_point_rate': (100*Decimal(team_stats[
+                'total_three_pt_attempts']) /
+                Decimal(team_stats['total_fg_attempts'])).quantize(
+                Decimal(10)**-1),
+            'ft_rate': (100*Decimal(team_stats[
+                'total_ft_attempts']) /
+                Decimal(team_stats['total_fg_attempts'])).quantize(
+                Decimal(10)**-1),
+            'o_efg': o_efg,
+            'o_tov': o_tov,
+            'o_orb': o_orb,
+            'o_ftp': o_ftp,
+            'd_efg': d_efg,
+            'd_tov': d_tov,
+            'd_orb': d_orb,
+            'd_ftp': d_ftp,
+            'diff_rtg': ortg - drtg,
+            'diff_efg': o_efg - d_efg,
+            'diff_tov': o_tov - d_tov,
+            'diff_orb': o_orb - d_orb,
+            'diff_ftp': o_ftp - d_ftp,
+            })

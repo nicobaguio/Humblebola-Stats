@@ -110,6 +110,7 @@ def team_nav_bar(context):
 
     return {'league': league,
             'team': team,
+            'tournament': tournament,
             'previous_tournament': previous_tournament,
             'next_tournament': next_tournament,
             'previous_tournament_link': previous_tournament_link,

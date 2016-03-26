@@ -1,5 +1,6 @@
 {% extends "base_team.html" %}
 {% block section %}
+    <h3><a name="roster">Roster</a></h3>
     <table>
         <tr>
             <th>No.</th>
@@ -37,4 +38,204 @@
             </tr>
         {% endfor %}
     </table>
+    <h3><a name="team_stats"></a>Team and Opponent Stats</h3>
+    <h4>Totals</h4>
+    <table>
+        <tr>
+            <th> </th>
+            <th>G</th>
+            <th>MP</th>
+            <th>PTS</th>
+            <th>FGM</th>
+            <th>FGA</th>
+            <th>FG%</th>
+            <th>3PM</th>
+            <th>3PA</th>
+            <th>3P%</th>
+            <th>FTM</th>
+            <th>FTA</th>
+            <th>FT%</th>
+            <th>ORB</th>
+            <th>DRB</th>
+            <th>TRB</th>
+            <th>AST</th>
+            <th>STL</th>
+            <th>BLK</th>
+            <th>TOV</th>
+            <th>PF</th>
+        </tr>
+        <tr>
+            <td>Team</td>
+            <td>{{ team_total_table.total_games_played }}</td>
+            <td>{{ team_total_table.total_minutes_played }}</td>
+            <td>{{ team_total_table.total_points_scored }}</td>
+            <td>{{ team_total_table.total_fg_made }}</td>
+            <td>{{ team_total_table.total_fg_attempts}}</td>
+            <td>{{ team_total_table.fg_percent }}</td>
+            <td>{{ team_total_table.total_three_pt_made }}</td>
+            <td>{{ team_total_table.total_three_pt_attempts }}</td>
+            <td>{{ team_total_table.three_pt_percent }}</td>
+            <td>{{ team_total_table.total_ft_made }}</td>
+            <td>{{ team_total_table.total_ft_attempts }}</td>
+            <td>{{ team_total_table.ft_percent }}</td>
+            <td>{{ team_total_table.total_offensive_reb }}</td>
+            <td>{{ team_total_table.total_defensive_reb }}</td>
+            <td>{{ team_total_table.reb }}</td>
+            <td>{{ team_total_table.total_assists }}</td>
+            <td>{{ team_total_table.total_steals }}</td>
+            <td>{{ team_total_table.total_blocks }}</td>
+            <td>{{ team_total_table.total_turnovers }}</td>
+            <td>{{ team_total_table.total_personal_fouls }}</td>
+        </tr>
+        <tr>
+            <td>Opp</td>
+            <td>{{ opp_team_total_table.total_games_played }}</td>
+            <td>{{ opp_team_total_table.total_minutes_played }}</td>
+            <td>{{ opp_team_total_table.total_points_scored }}</td>
+            <td>{{ opp_team_total_table.total_fg_made }}</td>
+            <td>{{ opp_team_total_table.total_fg_attempts}}</td>
+            <td>{{ opp_team_total_table.fg_percent }}</td>
+            <td>{{ opp_team_total_table.total_three_pt_made }}</td>
+            <td>{{ opp_team_total_table.total_three_pt_attempts }}</td>
+            <td>{{ opp_team_total_table.three_pt_percent }}</td>
+            <td>{{ opp_team_total_table.total_ft_made }}</td>
+            <td>{{ opp_team_total_table.total_ft_attempts }}</td>
+            <td>{{ opp_team_total_table.ft_percent }}</td>
+            <td>{{ opp_team_total_table.total_offensive_reb }}</td>
+            <td>{{ opp_team_total_table.total_defensive_reb }}</td>
+            <td>{{ opp_team_total_table.reb }}</td>
+            <td>{{ opp_team_total_table.total_assists }}</td>
+            <td>{{ opp_team_total_table.total_steals }}</td>
+            <td>{{ opp_team_total_table.total_blocks }}</td>
+            <td>{{ opp_team_total_table.total_turnovers }}</td>
+            <td>{{ opp_team_total_table.total_personal_fouls }}</td>
+        </tr>
+    </table>
+
+    <h4>Per Game</h4>
+    <table>
+        <tr>
+            <th> </th>
+            <th>G</th>
+            <th>MP</th>
+            <th>PTS</th>
+            <th>FGM</th>
+            <th>FGA</th>
+            <th>FG%</th>
+            <th>3PM</th>
+            <th>3PA</th>
+            <th>3P%</th>
+            <th>FTM</th>
+            <th>FTA</th>
+            <th>FT%</th>
+            <th>ORB</th>
+            <th>DRB</th>
+            <th>TRB</th>
+            <th>AST</th>
+            <th>STL</th>
+            <th>BLK</th>
+            <th>TOV</th>
+            <th>PF</th>
+        </tr>
+        <tr>
+            <td>Team</td>
+            <td>{{ team_per_game_table.games_played }}</td>
+            <td>{{ team_per_game_table.minutes_played }}</td>
+            <td>{{ team_per_game_table.points_scored }}</td>
+            <td>{{ team_per_game_table.fg_made }}</td>
+            <td>{{ team_per_game_table.fg_attempts}}</td>
+            <td>{{ team_per_game_table.fg_percent }}</td>
+            <td>{{ team_per_game_table.three_pt_made }}</td>
+            <td>{{ team_per_game_table.three_pt_attempts }}</td>
+            <td>{{ team_per_game_table.three_pt_percent }}</td>
+            <td>{{ team_per_game_table.ft_made }}</td>
+            <td>{{ team_per_game_table.ft_attempts }}</td>
+            <td>{{ team_per_game_table.ft_percent }}</td>
+            <td>{{ team_per_game_table.offensive_reb }}</td>
+            <td>{{ team_per_game_table.defensive_reb }}</td>
+            <td>{{ team_per_game_table.reb }}</td>
+            <td>{{ team_per_game_table.assists }}</td>
+            <td>{{ team_per_game_table.steals }}</td>
+            <td>{{ team_per_game_table.blocks }}</td>
+            <td>{{ team_per_game_table.turnovers }}</td>
+            <td>{{ team_per_game_table.personal_fouls }}</td>
+        </tr>
+        <tr>
+            <td>Opp</td>
+            <td>{{ opp_team_per_game_table.games_played }}</td>
+            <td>{{ opp_team_per_game_table.minutes_played }}</td>
+            <td>{{ opp_team_per_game_table.points_scored }}</td>
+            <td>{{ opp_team_per_game_table.fg_made }}</td>
+            <td>{{ opp_team_per_game_table.fg_attempts}}</td>
+            <td>{{ opp_team_per_game_table.fg_percent }}</td>
+            <td>{{ opp_team_per_game_table.three_pt_made }}</td>
+            <td>{{ opp_team_per_game_table.three_pt_attempts }}</td>
+            <td>{{ opp_team_per_game_table.three_pt_percent }}</td>
+            <td>{{ opp_team_per_game_table.ft_made }}</td>
+            <td>{{ opp_team_per_game_table.ft_attempts }}</td>
+            <td>{{ opp_team_per_game_table.ft_percent }}</td>
+            <td>{{ opp_team_per_game_table.offensive_reb }}</td>
+            <td>{{ opp_team_per_game_table.defensive_reb }}</td>
+            <td>{{ opp_team_per_game_table.reb }}</td>
+            <td>{{ opp_team_per_game_table.assists }}</td>
+            <td>{{ opp_team_per_game_table.steals }}</td>
+            <td>{{ opp_team_per_game_table.blocks }}</td>
+            <td>{{ opp_team_per_game_table.turnovers }}</td>
+            <td>{{ opp_team_per_game_table.personal_fouls }}</td>
+        </tr>
+    </table>
+
+    <h4>Advanced</h4>
+    <table>
+        <tr>
+            <th colspan="6">Miscellaneous Stats</th>
+            <th colspan="4">Offensive Four Factors</th>
+            <th colspan="4">Defensive Four Factors</th>
+            <th colspan="5">Differential</th>
+        </tr>
+        <tr>
+            <th> </th>
+            <th>ORTG</th>
+            <th>DRTG</th>
+            <th>Pace</th>
+            <th>3PTR</th>
+            <th>FTR</th>
+            <th>eFG%</th>
+            <th>TOV%</th>
+            <th>ORB%</th>
+            <th>FT/FGA</th>
+            <th>eFG%</th>
+            <th>TOV%</th>
+            <th>ORB%</th>
+            <th>FT/FGA</th>
+            <th>RTG</th>
+            <th>eFG%</th>
+            <th>TOV%</th>
+            <th>ORB%</th>
+            <th>FT/FGA</th>
+        </tr>
+        <tr>
+            <td>Team</td>
+            <td>{{ ortg }}</td>
+            <td>{{ drtg }}</td>
+            <td>{{ pace }}</td>
+            <td>{{ team_adv_table.three_point_rate}}</td>
+            <td>{{ team_adv_table.ft_rate }}</td>
+            <td>{{ team_adv_table.o_efg }}</td>
+            <td>{{ team_adv_table.o_tov }}</td>
+            <td>{{ team_adv_table.o_orb }}</td>
+            <td>{{ team_adv_table.o_ftp }}</td>
+            <td>{{ team_adv_table.d_efg }}</td>
+            <td>{{ team_adv_table.d_tov }}</td>
+            <td>{{ team_adv_table.d_orb }}</td>
+            <td>{{ team_adv_table.d_ftp }}</td>
+            <td>{{ team_adv_table.diff_rtg }}</td>
+            <td>{{ team_adv_table.diff_efg }}</td>
+            <td>{{ team_adv_table.diff_tov }}</td>
+            <td>{{ team_adv_table.diff_orb }}</td>
+            <td>{{ team_adv_table.diff_ftp }}</td>
+        </tr>
+    </table>
 {% endblock %}
+
+

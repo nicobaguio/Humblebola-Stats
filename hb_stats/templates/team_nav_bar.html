@@ -5,27 +5,38 @@
 {% if next_tournament_link %}
     <a href="{{ next_tournament_link }}"><p>{{ next_tournament.name }} >></p></a>
 {% endif %}
-{% if league.id == 1 %}
-    {% regroup tournaments_table by tournament.parent.short_name as tournament_list %}
+<ul>
+<li>Seasons
+    {% if league.id == 1 %}
+        {% regroup tournaments_table by tournament.parent.short_name as tournament_list %}
+        <ul>
+        {% for tournament in tournament_list %}
+            {% if tournament.grouper %}
+                <li>{{ tournament.grouper }}
+                <ul>
+                    {% for item in tournament.list %}
+                        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code item.tournament.id %}">{{ item.tournament.short_name }}</a></li>
+                    {% endfor %}
+                </ul>
+                </li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+    {% else %}
+        <ul>
+        {% for item in tournaments_table %}
+            <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code item.tournament.id %}">{{ item.tournament.short_name }}</a></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</li>
+<li>Roster & Stats
     <ul>
-    {% for tournament in tournament_list %}
-        {% if tournament.grouper %}
-            <li>{{ tournament.grouper }}
-            <ul>
-                {% for item in tournament.list %}
-                    <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code item.tournament.id %}">{{ item.tournament.short_name }}</a></li>
-                {% endfor %}
-            </ul>
-            </li>
-        {% endif %}
-    {% endfor %}
-{% else %}
-    <ul>
-    {% for item in tournaments_table %}
-        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code item.tournament.id %}">{{ item.tournament.short_name }}</a></li>
-    {% endfor %}
+        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#roster">Roster</a></li>
+            <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#team_stats">Team & Opponent Stats</a></li>
     </ul>
-{% endif %}
+</li>
+</ul>
 <p>Record: {{ record.win }}-{{ record.loss }}</p>
 <p>ORTG: {{ ortg }}</p>
 <p>DRTG: {{ drtg }}</p>

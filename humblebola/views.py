@@ -362,6 +362,28 @@ def team_tournament_page(request, code, team_code, tournament_id):
     pace = analytics.get_pace(games, team)
     ortg = analytics.get_eff_ratings(games.filter(game_type=0), 'off', team)
     drtg = analytics.get_eff_ratings(games.filter(game_type=0), 'def', team)
+    team_total_table = analytics.get_team_stat(
+            games.filter(game_type=0),
+            team,
+            'totals')
+    team_per_game_table = analytics.get_team_stat(
+        games.filter(game_type=0),
+        team,
+        'per_game')
+    team_adv_table = analytics.get_team_stat(
+        games.filter(game_type=0),
+        team,
+        'adv')
+    opp_team_total_table = analytics.get_team_stat(
+            games.filter(game_type=0),
+            team,
+            'totals',
+            'opp')
+    opp_team_per_game_table = analytics.get_team_stat(
+        games.filter(game_type=0),
+        team,
+        'per_game',
+        'opp')
 
     return render(request, 'humblebola/team_tournament_page.html', {
         'league': league,
@@ -374,6 +396,11 @@ def team_tournament_page(request, code, team_code, tournament_id):
         'ortg': ortg,
         'drtg': drtg,
         'players': players,
+        'team_total_table': team_total_table,
+        'team_per_game_table': team_per_game_table,
+        'team_adv_table': team_adv_table,
+        'opp_team_total_table': opp_team_total_table,
+        'opp_team_per_game_table': opp_team_per_game_table,
         })
 
 
