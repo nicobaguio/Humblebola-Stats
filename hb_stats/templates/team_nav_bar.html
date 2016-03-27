@@ -33,7 +33,21 @@
 <li>Roster & Stats
     <ul>
         <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#roster">Roster</a></li>
-            <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#team_stats">Team & Opponent Stats</a></li>
+        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#team_stats">Team & Opponent Stats</a></li>
+        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#players_totals">Players: Totals</a></li>
+        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#players_per_game">Players: Per Game</a></li>
+        {% if league.id == 1 %}
+            <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#players_per_x_min">Players: Per 36 Min</a></li>
+        {% else %}
+            <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#players_per_x_min">Players: Per 30 Min</a></li>
+        {% endif %}
+    </ul>
+</li>
+<li>Schedule and Results</li>
+<li>Others
+    <ul>
+        <li>Game Log</li>
+        <li>Starting Lineups</li>
     </ul>
 </li>
 </ul>

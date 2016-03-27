@@ -1,4 +1,5 @@
 from decimal import Decimal
+from django.shortcuts import get_object_or_404
 from django.db.models import F, Sum, Avg
 
 from humblebola.models import *
@@ -247,7 +248,6 @@ def get_eff_ratings(games, rating=None, team=None):
 
 
 def get_stat(games):
-
     total_points_scored = Decimal(games.aggregate(
         Sum('ft_made'))['ft_made__sum']) + \
         Decimal(games.aggregate(
@@ -334,7 +334,9 @@ def get_stat(games):
 
 
 def get_player_stat(games, player, table_type, game_type=0):
-    league = player.current_league
+    league = get_object_or_404(
+        League,
+        id__in=games.values_list('league_id', flat=True).distinct())
     player_games = GamePlayerStat.objects.filter(
         player_id=player.id,
         game_id__in=games.filter(
@@ -345,17 +347,46 @@ def get_player_stat(games, player, table_type, game_type=0):
 
     games_started = player_games.filter(started="True").count()
 
-    total_minutes_played = (Decimal(player_games.aggregate(
-        Sum('seconds_played'))['seconds_played__sum']) /
-        60).quantize(Decimal(10)**-1)
+    try:
+        total_minutes_played = (Decimal(player_games.aggregate(
+            Sum('seconds_played'))['seconds_played__sum']) /
+            60).quantize(Decimal(10)**-1)
+    except TypeError:
+        total_minutes_played = 0
 
-    if league.id == 1:
-        adjusted_minutes = 36 / total_minutes_played
+    try:
+        if league.id == 1:
+            adjusted_minutes = 36 / total_minutes_played
+        else:
+            adjusted_minutes = 30 / total_minutes_played
+    except ZeroDivisionError:
+        adjusted_minutes = 1
+    if total_minutes_played > 0:
+        player_stat = get_stat(player_games)
     else:
-        adjusted_minutes = 30 / total_minutes_played
-
-    player_stat = get_stat(player_games)
-
+        return ({
+            'games_played': 0,
+            'games_started': 0,
+            'minutes_played': 0,
+            'points_scored': 0,
+            'fg_made': 0,
+            'fg_attempts': 0,
+            'fg_percent': 0,
+            'three_pt_made': 0,
+            'three_pt_attempts': 0,
+            'three_pt_percent': 0,
+            'ft_made': 0,
+            'ft_attempts': 0,
+            'ft_percent': 0,
+            'offensive_reb': 0,
+            'defensive_reb': 0,
+            'reb': 0,
+            'assists': 0,
+            'steals': 0,
+            'blocks': 0,
+            'turnovers': 0,
+            'personal_fouls': 0
+            })
     if table_type == 'totals':
         return ({
             'games_played': games_played,

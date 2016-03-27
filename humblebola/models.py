@@ -124,12 +124,14 @@ class Player(models.Model):
         if self.height:
             return "{}\'{}\"".format(self.height / 12, self.height % 12)
 
-    def get_age(self, date=date.today()):
+    def get_age(self, date=date.today(), decimal=2):
         if self.birthday:
             age_in_days = (date - self.birthday).days
             age = Decimal(age_in_days/365) + Decimal(age_in_days % 365) / 365
 
-            return age.quantize(Decimal(10)**-2)
+            return age.quantize(Decimal(10)**-decimal)
+        else:
+            return 'NA'
 
 
 class PlayerTournamentTeam(models.Model):

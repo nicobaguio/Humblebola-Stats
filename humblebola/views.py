@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect
-
+from decimal import Decimal
 from .models import *
 
 from datetime import date, datetime, time
@@ -385,6 +385,49 @@ def team_tournament_page(request, code, team_code, tournament_id):
         'per_game',
         'opp')
 
+    player_totals_table = []
+    player_per_game_table = []
+    player_per_three_six_table = []
+
+    for player in players.order_by('last_name', 'first_name'):
+        player_age = player.get_age(tournament.start_date, 0)
+
+        player_totals_dict = analytics.get_player_stat(
+            games,
+            player,
+            'totals')
+
+        player_per_game_dict = analytics.get_player_stat(
+            games,
+            player,
+            'per_game')
+
+        player_per_three_six_dict = analytics.get_player_stat(
+            games,
+            player,
+            'per_three_six')
+
+        player_totals_dict.update({
+            'full_name': player.first_name + " " + player.last_name,
+            'age': player_age,
+            })
+
+        player_totals_table.append(player_totals_dict)
+
+        player_per_game_dict.update({
+            'full_name': player.first_name + " " + player.last_name,
+            'age': player_age,
+            })
+
+        player_per_game_table.append(player_per_game_dict)
+
+        player_per_three_six_dict.update({
+            'full_name': player.first_name + " " + player.last_name,
+            'age': player_age,
+            })
+
+        player_per_three_six_table.append(player_per_three_six_dict)
+
     return render(request, 'humblebola/team_tournament_page.html', {
         'league': league,
         'team': team,
@@ -401,6 +444,9 @@ def team_tournament_page(request, code, team_code, tournament_id):
         'team_adv_table': team_adv_table,
         'opp_team_total_table': opp_team_total_table,
         'opp_team_per_game_table': opp_team_per_game_table,
+        'player_totals_table': player_totals_table,
+        'player_per_game_table': player_per_game_table,
+        'player_per_three_six_table': player_per_three_six_table,
         })
 
 
