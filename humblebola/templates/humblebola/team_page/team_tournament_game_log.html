@@ -112,4 +112,116 @@
     </tbody>
 </table>
 
+<h3>PLAYOFFS</h3>
+<table>
+    <thead>
+        <tr>
+            <th colspan=5> </th>
+            <th colspan=17>Team</th>
+            <th colspan=17>Opponent</th>
+        </tr>
+        <tr>
+            <th>Date</th>
+            <th>Opponent</th>
+            <th>W/L</th>
+            <th>Team</th>
+            <th>Opp</th>
+            <th>FGM</th>
+            <th>FGA</th>
+            <th>FG%</th>
+            <th>3PM</th>
+            <th>3PA</th>
+            <th>3P%</th>
+            <th>FTM</th>
+            <th>FTA</th>
+            <th>FT%</th>
+            <th>ORB</th>
+            <th>DRB</th>
+            <th>TRB</th>
+            <th>AST</th>
+            <th>STL</th>
+            <th>BLK</th>
+            <th>TOV</th>
+            <th>PF</th>
+            <th>FGM</th>
+            <th>FGA</th>
+            <th>FG%</th>
+            <th>3PM</th>
+            <th>3PA</th>
+            <th>3P%</th>
+            <th>FTM</th>
+            <th>FTA</th>
+            <th>FT%</th>
+            <th>ORB</th>
+            <th>DRB</th>
+            <th>TRB</th>
+            <th>AST</th>
+            <th>STL</th>
+            <th>BLK</th>
+            <th>TOV</th>
+            <th>PF</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in playoff_game_totals_table %}
+        <tr>
+            <td>{{ item.game.schedule }}</td>
+            {% if item.game.home_team == team %}
+                <td>{{ item.game.away_team.code }}</td>
+                {% if item.game.home_pts > item.game.away_pts %}
+                    <td>W</td>
+                {% else %}
+                    <td>L</td>
+                {% endif %}
+                <td>{{ item.game.home_pts }}</td>
+                <td>{{ item.game.away_pts }}</td>
+            {% else %}
+                <td>{{ item.game.home_team.code }}</td>
+                {% if item.game.home_pts > item.game.away_pts %}
+                    <td>L</td>
+                {% else %}
+                    <td>W</td>
+                {% endif %}
+                <td>{{ item.game.away_pts }}</td>
+                <td>{{ item.game.home_pts }}</td>
+            {% endif %}
+                <td>{{ item.total_fg_made }}</td>
+                <td>{{ item.total_fg_attempts }}</td>
+                <td>{{ item.fg_percent }}</td>
+                <td>{{ item.total_three_pt_made }}</td>
+                <td>{{ item.total_three_pt_attempts }}</td>
+                <td>{{ item.three_pt_percent }}</td>
+                <td>{{ item.total_ft_made }}</td>
+                <td>{{ item.total_ft_attempts }}</td>
+                <td>{{ item.ft_percent }}</td>
+                <td>{{ item.total_offensive_reb }}</td>
+                <td>{{ item.total_defensive_reb }}</td>
+                <td>{{ item.total_offensive_reb|add:item.total_defensive_reb }}</td>
+                <td>{{ item.total_assists }}</td>
+                <td>{{ item.total_steals }}</td>
+                <td>{{ item.total_blocks }}</td>
+                <td>{{ item.total_turnovers }}</td>
+                <td>{{ item.total_personal_fouls }}</td>
+                <td>{{ item.opp_total_fg_made }}</td>
+                <td>{{ item.opp_total_fg_attempts }}</td>
+                <td>{{ item.opp_fg_percent }}</td>
+                <td>{{ item.opp_total_three_pt_made }}</td>
+                <td>{{ item.opp_total_three_pt_attempts }}</td>
+                <td>{{ item.opp_three_pt_percent }}</td>
+                <td>{{ item.opp_total_ft_made }}</td>
+                <td>{{ item.opp_total_ft_attempts }}</td>
+                <td>{{ item.opp_ft_percent }}</td>
+                <td>{{ item.opp_total_offensive_reb }}</td>
+                <td>{{ item.opp_total_defensive_reb }}</td>
+                <td>{{ item.opp_total_offensive_reb|add:item.total_defensive_reb }}</td>
+                <td>{{ item.opp_total_assists }}</td>
+                <td>{{ item.opp_total_steals }}</td>
+                <td>{{ item.opp_total_blocks }}</td>
+                <td>{{ item.opp_total_turnovers }}</td>
+                <td>{{ item.opp_total_personal_fouls }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}

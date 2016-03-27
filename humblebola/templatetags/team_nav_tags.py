@@ -9,13 +9,13 @@ register = template.Library()
 @register.inclusion_tag('team_nav_bar.html', takes_context=True)
 def team_nav_bar(context):
     league = context['league']
-    tournament = context['tournament']
+    current_tournament = context['tournament']
     team = context['team']
     request = context['request']
     games = Game.objects.filter(
         league_id=league.id,
-        schedule__gt=tournament.start_date,
-        schedule__lt=tournament.end_date)
+        schedule__gt=current_tournament.start_date,
+        schedule__lt=current_tournament.end_date)
 
     child_tournaments = Tournament.objects.filter(
         league_id=league.id,
@@ -44,7 +44,7 @@ def team_nav_bar(context):
             previous_tournament = Tournament.objects.filter(
                 league_id=league.id,
                 parent_id__isnull=False,
-                id__lt=tournament.id,
+                id__lt=current_tournament.id,
                 ).order_by('-start_date')[0]
 
             previous_tournament_link = reverse(resolve(
@@ -60,7 +60,7 @@ def team_nav_bar(context):
             next_tournament = Tournament.objects.filter(
                 league_id=league.id,
                 parent_id__isnull=False,
-                id__gt=tournament.id,
+                id__gt=current_tournament.id,
                 ).order_by('start_date')[0]
 
             next_tournament_link = reverse(resolve(
@@ -75,7 +75,7 @@ def team_nav_bar(context):
         try:
             previous_tournament = Tournament.objects.filter(
                 league_id=league.id,
-                id__lt=tournament.id,
+                id__lt=current_tournament.id,
                 ).order_by('-start_date')[0]
 
             previous_tournament_link = reverse(resolve(
@@ -90,7 +90,7 @@ def team_nav_bar(context):
         try:
             next_tournament = Tournament.objects.filter(
                 league_id=league.id,
-                id__gt=tournament.id,
+                id__gt=current_tournament.id,
                 ).order_by('start_date')[0]
 
             next_tournament_link = reverse(resolve(
@@ -110,7 +110,7 @@ def team_nav_bar(context):
 
     return {'league': league,
             'team': team,
-            'tournament': tournament,
+            'current_tournament': current_tournament,
             'previous_tournament': previous_tournament,
             'next_tournament': next_tournament,
             'previous_tournament_link': previous_tournament_link,

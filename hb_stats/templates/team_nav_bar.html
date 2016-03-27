@@ -32,21 +32,21 @@
 </li>
 <li>Roster & Stats
     <ul>
-        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#roster">Roster</a></li>
-        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#team_stats">Team & Opponent Stats</a></li>
-        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#players_totals">Players: Totals</a></li>
-        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#players_per_game">Players: Per Game</a></li>
+        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code current_tournament.id %}#roster">Roster</a></li>
+        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code current_tournament.id %}#team_stats">Team & Opponent Stats</a></li>
+        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code current_tournament.id %}#players_totals">Players: Totals</a></li>
+        <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code current_tournament.id %}#players_per_game">Players: Per Game</a></li>
         {% if league.id == 1 %}
-            <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#players_per_x_min">Players: Per 36 Min</a></li>
+            <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code current_tournament.id %}#players_per_x_min">Players: Per 36 Min</a></li>
         {% else %}
-            <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code tournament.id %}#players_per_x_min">Players: Per 30 Min</a></li>
+            <li><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code current_tournament.id %}#players_per_x_min">Players: Per 30 Min</a></li>
         {% endif %}
     </ul>
 </li>
-<li><a href="{% url 'teams:team:tournament:schedule' league.code team.code tournament.id %}">Schedule and Results</a></li>
+<li><a href="{% url 'teams:team:tournament:schedule' league.code team.code current_tournament.id %}">Schedule and Results</a></li>
 <li>Others
     <ul>
-        <li><a href="{% url 'teams:team:tournament:game_log' league.code team.code tournament.id %}">Game Log</a></li>
+        <li><a href="{% url 'teams:team:tournament:game_log' league.code team.code current_tournament.id %}">Game Log</a></li>
         <li>Starting Lineups</li>
     </ul>
 </li>
@@ -54,3 +54,4 @@
 <p>Record: {{ record.win }}-{{ record.loss }}</p>
 <p>ORTG: {{ ortg }}</p>
 <p>DRTG: {{ drtg }}</p>
+{{ current_tournament.name }}
