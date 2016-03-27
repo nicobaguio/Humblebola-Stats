@@ -476,8 +476,8 @@ def team_schedule_page(request, code, team_code, tournament_id):
         'league': league,
         'team': team,
         'tournament': tournament,
-        'regular_games': games.filter(game_type=0),
-        'playoff_games': games.filter(game_type=1),
+        'regular_games': games.filter(game_type=0).order_by('schedule'),
+        'playoff_games': games.filter(game_type=1).order_by('schedule'),
         })
 
 
@@ -486,9 +486,83 @@ def team_tournament_game_log(request, code, team_code, tournament_id):
     team = get_object_or_404(Team, code=team_code)
     tournament = get_object_or_404(Tournament, id=tournament_id)
 
+    home_games = Game.objects.filter(
+        league_id=league.id,
+        schedule__gt=tournament.start_date,
+        schedule__lt=tournament.end_date,
+        home_team_id=team.id)
+
+    away_games = Game.objects.filter(
+        league_id=league.id,
+        schedule__gt=tournament.start_date,
+        schedule__lt=tournament.end_date,
+        away_team_id=team.id)
+
+    games = home_games | away_games
+
+    regular_game_totals_table = []
+    playoff_game_totals_table = []
+
+    for game in games.order_by('schedule'):
+        if game.game_type == 0:
+            team_game_stat = GameTeamStat.objects.filter(
+                game_id=game.id,
+                team_id=team.id)
+
+            opp_team_game_stat = GameTeamStat.objects.filter(
+                game_id=game.id,
+                opp_team_id=team.id)
+
+            team_game_stat_dict = analytics.get_stat(team_game_stat)
+            opp_team_game_stat_dict = analytics.get_stat(opp_team_game_stat)
+
+            team_game_stat_dict.update({
+                'game': game,
+                'opp_total_points_scored': opp_team_game_stat_dict['total_points_scored'],
+                'opp_total_fg_made': opp_team_game_stat_dict['total_fg_made'],
+                'opp_total_fg_attempts': opp_team_game_stat_dict['total_fg_attempts'],
+                'opp_fg_percent': opp_team_game_stat_dict['fg_percent'],
+                'opp_total_three_pt_made': opp_team_game_stat_dict['total_three_pt_made'],
+                'opp_total_three_pt_attempts': opp_team_game_stat_dict['total_three_pt_attempts'],
+                'opp_three_pt_percent': opp_team_game_stat_dict['three_pt_percent'],
+                'opp_total_ft_made': opp_team_game_stat_dict['total_ft_made'],
+                'opp_total_ft_attempts': opp_team_game_stat_dict['total_ft_attempts'],
+                'opp_ft_percent': opp_team_game_stat_dict['ft_percent'],
+                'opp_total_offensive_reb': opp_team_game_stat_dict['total_offensive_reb'],
+                'opp_total_defensive_reb': opp_team_game_stat_dict['total_defensive_reb'],
+                'opp_total_assists': opp_team_game_stat_dict['total_assists'],
+                'opp_total_steals': opp_team_game_stat_dict['total_steals'],
+                'opp_total_blocks': opp_team_game_stat_dict['total_blocks'],
+                'opp_total_turnovers': opp_team_game_stat_dict['total_turnovers'],
+                'opp_total_personal_fouls': opp_team_game_stat_dict['total_personal_fouls'],
+                })
+
+
+
+            regular_game_totals_table.append(team_game_stat_dict)
+
+        elif game.game_type == 1:
+            team_game_stat = GameTeamStat.objects.filter(
+                game_id=game.id,
+                team_id=team.id)
+
+            opp_team_game_stat = GameTeamStat.objects.filter(
+                game_id=game.id,
+                opp_team_id=team.id)
+
+            team_game_stat_dict = analytics.get_stat(team_game_stat)
+            team_game_stat_dict.update({
+                'game': game,
+                })
+            opp_team_game_stat_dict = analytics.get_stat(opp_team_game_stat)
+
+            playoff_game_totals_table.append(team_game_stat_dict)
+
     return render(request,
                   'humblebola/team_page/team_tournament_game_log.html', {
                     'league': league,
                     'team': team,
                     'tournament': tournament,
+                    'regular_game_totals_table': regular_game_totals_table,
+                    'playoff_game_totals_table': playoff_game_totals_table,
                     })

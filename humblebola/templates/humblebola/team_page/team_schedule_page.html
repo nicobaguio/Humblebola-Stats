@@ -6,38 +6,46 @@
 <h1>REGULAR SEASON</h1>
     <table>
         <tr>
-            <th>Home Team</th>
-            <th>Away Team</th>
             <th>Date</th>
-            <th>Home Team score</th>
-            <th>Away Team score</th>
+            <th>Opponent</th>
+            <th>Team score</th>
+            <th>Opp Team score</th>
         </tr>
         {% for game in regular_games %}
             <tr>
-                <td>{{ game.home_team.code }}</td>
-                <td>{{ game.away_team.code }}</td>
                 <td>{{ game.schedule }}</td>
-                <td>{{ game.home_pts }}</td>
-                <td>{{ game.away_pts }}</td>
+                {% if game.home_team == team %}
+                    <td>{{ game.away_team.code }}</td>
+                    <td>{{ game.home_pts }}</td>
+                    <td>{{ game.away_pts }}</td>
+                {% else %}
+                    <td>{{ game.home_team.code }}</td>
+                    <td>{{ game.away_pts }}</td>
+                    <td>{{ game.home_pts }}</td>
+                {% endif %}
             </tr>
         {% endfor %}
     </table>
 <h1>PLAYOFFS</h1>
     <table>
         <tr>
-            <th>Home Team</th>
-            <th>Away Team</th>
             <th>Date</th>
-            <th>Home Team score</th>
-            <th>Away Team score</th>
+            <th>Opponent</th>
+            <th>Team score</th>
+            <th>Opp Team score</th>
         </tr>
         {% for game in playoff_games %}
             <tr>
-                <td>{{ game.home_team.code }}</td>
-                <td>{{ game.away_team.code }}</td>
                 <td>{{ game.schedule }}</td>
-                <td>{{ game.home_pts }}</td>
-                <td>{{ game.away_pts }}</td>
+                {% if game.home_team == team %}
+                    <td>{{ game.away_team.code }}</td>
+                    <td>{{ game.home_pts }}</td>
+                    <td>{{ game.away_pts }}</td>
+                {% else %}
+                    <td>{{ game.home_team.code }}</td>
+                    <td>{{ game.away_pts }}</td>
+                    <td>{{ game.home_pts }}</td>
+                {% endif %}
             </tr>
         {% endfor %}
     </table>
