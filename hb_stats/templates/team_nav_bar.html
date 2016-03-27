@@ -43,7 +43,7 @@
         {% endif %}
     </ul>
 </li>
-<li>Schedule and Results</li>
+<li><a href="{% url 'teams:team:tournament:schedule' league.code team.code tournament.id %}">Schedule and Results</a></li>
 <li>Others
     <ul>
         <li>Game Log</li>
