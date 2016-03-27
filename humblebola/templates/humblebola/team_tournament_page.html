@@ -267,7 +267,7 @@
         </tr>
         {% for player in player_totals_table %}
             <tr>
-                <td>{{ player.full_name }}</td>
+                <td><a href="{{ player.player.get_absolute_url }}">{{ player.full_name }}</a></td>
                 <td>{{ player.age }}</td>
                 <td>{{ player.games_played }}</td>
                 <td>{{ player.games_started }}</td>
@@ -323,7 +323,7 @@
         </tr>
         {% for player in player_per_game_table %}
             <tr>
-                <td>{{ player.full_name }}</td>
+                <td><a href="{{ player.player.get_absolute_url }}">{{ player.full_name }}</a></td>
                 <td>{{ player.age }}</td>
                 <td>{{ player.games_played }}</td>
                 <td>{{ player.games_started }}</td>
@@ -383,7 +383,7 @@
         </tr>
         {% for player in player_per_three_six_table %}
             <tr>
-                <td>{{ player.full_name }}</td>
+                <td><a href="{{ player.player.get_absolute_url }}">{{ player.full_name }}</a></td>
                 <td>{{ player.age }}</td>
                 <td>{{ player.games_played }}</td>
                 <td>{{ player.games_started }}</td>

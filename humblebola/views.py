@@ -410,6 +410,7 @@ def team_tournament_page(request, code, team_code, tournament_id):
         player_totals_dict.update({
             'full_name': player.first_name + " " + player.last_name,
             'age': player_age,
+            'player': player,
             })
 
         player_totals_table.append(player_totals_dict)
@@ -417,6 +418,7 @@ def team_tournament_page(request, code, team_code, tournament_id):
         player_per_game_dict.update({
             'full_name': player.first_name + " " + player.last_name,
             'age': player_age,
+            'player': player,
             })
 
         player_per_game_table.append(player_per_game_dict)
@@ -424,6 +426,7 @@ def team_tournament_page(request, code, team_code, tournament_id):
         player_per_three_six_dict.update({
             'full_name': player.first_name + " " + player.last_name,
             'age': player_age,
+            'player': player,
             })
 
         player_per_three_six_table.append(player_per_three_six_dict)
@@ -454,29 +457,25 @@ def team_schedule_page(request, code, team_code, tournament_id):
     league = get_object_or_404(League, code=code)
     team = get_object_or_404(Team, code=team_code)
     tournament = get_object_or_404(Tournament, id=tournament_id)
-    child_tournaments = Tournament.objects.filter(
-        league_id=league.id,
-        id__in=PlayerTournamentTeam.objects.filter(
-            team_id=team.id).distinct('tournament_id').values('tournament_id'))
 
-    parent_tournaments = Tournament.objects.filter(
-        id__in=Tournament.objects.filter(
-            league_id=league.id,
-            id__in=PlayerTournamentTeam.objects.filter(
-                team_id=team.id).distinct(
-                'tournament_id').values(
-                'tournament_id')).values_list('parent_id', flat=True))
-
-    games = Game.objects.filter(
+    home_games = Game.objects.filter(
         league_id=league.id,
         schedule__gt=tournament.start_date,
-        schedule__lt=tournament.end_date)
+        schedule__lt=tournament.end_date,
+        home_team_id=team.id)
+
+    away_games = Game.objects.filter(
+        league_id=league.id,
+        schedule__gt=tournament.start_date,
+        schedule__lt=tournament.end_date,
+        away_team_id=team.id)
+
+    games = home_games | away_games
 
     return render(request, 'humblebola/team_schedule_page.html', {
         'league': league,
         'team': team,
         'tournament': tournament,
-        'seasons': parent_tournaments if code == 'pba' else child_tournaments,
         'regular_games': games.filter(game_type=0),
         'playoff_games': games.filter(game_type=1),
         })

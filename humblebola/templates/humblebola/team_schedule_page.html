@@ -3,28 +3,6 @@
 {% block section %}
 
 <h3>Schedule & Results </h3>
-{% if league.id == 1 %}
-    {% regroup table by tournament.parent.short_name as tournament_list %}
-    <ul>
-    {% for tournament in tournament_list %}
-        {% if tournament.grouper %}
-            <li>{{ tournament.grouper }}
-            <ul>
-                {% for item in tournament.list %}
-                    <li><a href="{% url 'teams:team:tournament:schedule' league.code team.code item.tournament.id %}">{{ item.tournament.short_name }}</a></li>
-                {% endfor %}
-            </ul>
-            </li>
-        {% endif %}
-    {% endfor %}
-{% else %}
-    <ul>
-    {% for item in table %}
-        <li><a href="{% url 'teams:team:tournament:schedule' league.code team.code item.tournament.id %}">{{ item.tournament.short_name }}</a></li>
-    {% endfor %}
-    </ul>
-{% endif %}
-</ul>
 <h1>REGULAR SEASON</h1>
     <table>
         <tr>
