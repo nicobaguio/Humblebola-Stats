@@ -46,7 +46,7 @@
 <li><a href="{% url 'teams:team:tournament:schedule' league.code team.code tournament.id %}">Schedule and Results</a></li>
 <li>Others
     <ul>
-        <li>Game Log</li>
+        <li><a href="{% url 'teams:team:tournament:game_log' league.code team.code tournament.id %}">Game Log</a></li>
         <li>Starting Lineups</li>
     </ul>
 </li>

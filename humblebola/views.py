@@ -132,63 +132,6 @@ def schedule(request, code, tournament_id=None):
         'teams': Team.objects.filter(league_id=league.id)})
 
 
-def team_index_page(request, code, team_code):
-    league = get_object_or_404(League, code=code)
-    team = get_object_or_404(Team, code=team_code)
-    child_tournaments = Tournament.objects.filter(
-        league_id=league.id,
-        id__in=PlayerTournamentTeam.objects.filter(
-            team_id=team.id).distinct('tournament_id').values('tournament_id'))
-
-    parent_tournaments = Tournament.objects.filter(
-        id__in=Tournament.objects.filter(
-            league_id=league.id,
-            id__in=PlayerTournamentTeam.objects.filter(
-                team_id=team.id).distinct(
-                'tournament_id').values(
-                'tournament_id')).values_list('parent_id', flat=True))
-
-    team_tournaments = child_tournaments | parent_tournaments
-
-    table = []
-
-    for tournament in team_tournaments.order_by('start_date', 'id'):
-        current_games = Game.objects.filter(
-            league_id=league.id,
-            schedule__gt=tournament.start_date,
-            schedule__lt=tournament.end_date)
-
-        wins_and_losses = analytics.get_wins_losses(current_games, team)
-        win = wins_and_losses['win']
-        loss = wins_and_losses['loss']
-        win_p = wins_and_losses['win_p']
-        pace = analytics.get_pace(current_games.filter(game_type=0), team)
-        rel_pace = analytics.get_pace(current_games.filter(game_type=0)) - pace
-        ortg = analytics.get_eff_ratings(current_games.filter(
-            game_type=0), 'off', team)
-        drtg = analytics.get_eff_ratings(current_games.filter(
-            game_type=0), 'def', team)
-        rtg = analytics.get_eff_ratings(current_games.filter(
-            game_type=0))
-
-        table.append({'tournament': tournament,
-                      'win': win,
-                      'loss': loss,
-                      'win_p': win_p,
-                      'pace': pace,
-                      'rel_pace': rel_pace,
-                      'ortg': ortg,
-                      'rel_ortg': ortg - rtg,
-                      'drtg': drtg,
-                      'rel_drtg': drtg - rtg})
-
-    return render(request, 'humblebola/team_index_page.html', {
-        'league': league,
-        'team': team,
-        'seasons': parent_tournaments if code == 'pba' else child_tournaments,
-        'table': table})
-
-
 def player_home_page(request, code):
     league = get_object_or_404(League, code=code)
 
@@ -307,6 +250,63 @@ def player_page(request, code, player_id):
         'total_table': total_table,
         'per_game_table': per_game_table,
         'per_three_six_table': per_three_six_table})
+
+
+def team_index_page(request, code, team_code):
+    league = get_object_or_404(League, code=code)
+    team = get_object_or_404(Team, code=team_code)
+    child_tournaments = Tournament.objects.filter(
+        league_id=league.id,
+        id__in=PlayerTournamentTeam.objects.filter(
+            team_id=team.id).distinct('tournament_id').values('tournament_id'))
+
+    parent_tournaments = Tournament.objects.filter(
+        id__in=Tournament.objects.filter(
+            league_id=league.id,
+            id__in=PlayerTournamentTeam.objects.filter(
+                team_id=team.id).distinct(
+                'tournament_id').values(
+                'tournament_id')).values_list('parent_id', flat=True))
+
+    team_tournaments = child_tournaments | parent_tournaments
+
+    table = []
+
+    for tournament in team_tournaments.order_by('start_date', 'id'):
+        current_games = Game.objects.filter(
+            league_id=league.id,
+            schedule__gt=tournament.start_date,
+            schedule__lt=tournament.end_date)
+
+        wins_and_losses = analytics.get_wins_losses(current_games, team)
+        win = wins_and_losses['win']
+        loss = wins_and_losses['loss']
+        win_p = wins_and_losses['win_p']
+        pace = analytics.get_pace(current_games.filter(game_type=0), team)
+        rel_pace = analytics.get_pace(current_games.filter(game_type=0)) - pace
+        ortg = analytics.get_eff_ratings(current_games.filter(
+            game_type=0), 'off', team)
+        drtg = analytics.get_eff_ratings(current_games.filter(
+            game_type=0), 'def', team)
+        rtg = analytics.get_eff_ratings(current_games.filter(
+            game_type=0))
+
+        table.append({'tournament': tournament,
+                      'win': win,
+                      'loss': loss,
+                      'win_p': win_p,
+                      'pace': pace,
+                      'rel_pace': rel_pace,
+                      'ortg': ortg,
+                      'rel_ortg': ortg - rtg,
+                      'drtg': drtg,
+                      'rel_drtg': drtg - rtg})
+
+    return render(request, 'humblebola/team_page/team_index_page.html', {
+        'league': league,
+        'team': team,
+        'seasons': parent_tournaments if code == 'pba' else child_tournaments,
+        'table': table})
 
 
 def team_tournament_page(request, code, team_code, tournament_id):
@@ -431,7 +431,7 @@ def team_tournament_page(request, code, team_code, tournament_id):
 
         player_per_three_six_table.append(player_per_three_six_dict)
 
-    return render(request, 'humblebola/team_tournament_page.html', {
+    return render(request, 'humblebola/team_page/team_tournament_page.html', {
         'league': league,
         'team': team,
         'tournament': tournament,
@@ -472,10 +472,23 @@ def team_schedule_page(request, code, team_code, tournament_id):
 
     games = home_games | away_games
 
-    return render(request, 'humblebola/team_schedule_page.html', {
+    return render(request, 'humblebola/team_page/team_schedule_page.html', {
         'league': league,
         'team': team,
         'tournament': tournament,
         'regular_games': games.filter(game_type=0),
         'playoff_games': games.filter(game_type=1),
         })
+
+
+def team_tournament_game_log(request, code, team_code, tournament_id):
+    league = get_object_or_404(League, code=code)
+    team = get_object_or_404(Team, code=team_code)
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+
+    return render(request,
+                  'humblebola/team_page/team_tournament_game_log.html', {
+                    'league': league,
+                    'team': team,
+                    'tournament': tournament,
+                    })

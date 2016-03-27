@@ -17,18 +17,23 @@ tournament_patterns = [
         name="schedule")
 ]
 
+team_tournament_patterns = [
+    url(r'^$',
+        views.team_tournament_page,
+        name="tournament_page"),
+    url(r'games/',
+        views.team_schedule_page,
+        name="schedule"),
+    url(r'game_log',
+        views.team_tournament_game_log,
+        name="game_log"),
+]
 team_patterns = [
     url(r'(?P<team_code>[\w-]+)/', include([
         url(r'^$',
             views.team_index_page,
             name="index"),
-        url(r'(?P<tournament_id>[\d]+)/', include([
-            url(r'^$',
-                views.team_tournament_page,
-                name="tournament_page"),
-            url(r'games/',
-                views.team_schedule_page,
-                name="schedule")],
+        url(r'(?P<tournament_id>[\d]+)/', include(team_tournament_patterns,
             namespace="tournament")
             ),
         ], namespace="team")),

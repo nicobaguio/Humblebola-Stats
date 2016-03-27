@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ team.team_name }} {{ team.nickname }}</h1>
+<h2>{{ seasons|length }} Seasons</h2>
+
+
+<table>
+    <tr>
+        <th>Season</th>
+        <th>W</th>
+        <th>L</th>
+        <th>W/L%</th>
+        <th>Pace</th>
+        <th>Relative Pace</th>
+        <th>ORTG</th>
+        <th>Relative ORTG</th>
+        <th>DRTG</th>
+        <th>Relative DRTG</th>
+        <th>Results</th>
+        <th>Top WS</th>
+    </tr>
+    {% for item in table %}
+        <tr>
+            {% if league.id == 1 and item.tournament.parent_id == null %}
+                <td>{{ item.tournament.short_name }}</td>
+            {% else %}
+                <td><a href="{% url 'teams:team:tournament:tournament_page' league.code team.code item.tournament.id %}">{{ item.tournament.short_name }}</a></td>
+            {% endif %}
+            <td>{{ item.win }}</td>
+            <td>{{ item.loss }}</td>
+            <td>{{ item.win_p }}</td>
+            <td>{{ item.pace }}</td>
+            <td>{{ item.rel_pace }}</td>
+            <td>{{ item.ortg }}</td>
+            <td>{{ item.rel_ortg}}</td>
+            <td>{{ item.drtg }}</td>
+            <td>{{ item.rel_drtg}}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}
