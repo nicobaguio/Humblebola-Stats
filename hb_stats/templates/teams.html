@@ -1,4 +1,4 @@
-{% for team in teams|dictsort:'nickname' %}
+{% for team in teams|dictsort:'team_name' %}
     <a href="{% url 'teams:team:index' league.code team.code %}"><li>{{ team.team_name }} {{ team.nickname }}</li></a>
 {% endfor %}
 

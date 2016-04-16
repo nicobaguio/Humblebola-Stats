@@ -409,6 +409,28 @@
             </tr>
         {% endfor %}
     </table>
+
+    <h3>Advanced</h3>
+    <table>
+        <tr>
+            <th>Players</th>
+            <th>Age</th>
+            <th>GP</th>
+            <th>GS</th>
+            <th>MP</th>
+            <th>PER</th>
+        </tr>
+        {% for player in player_advanced_table %}
+            <tr>
+                <td><a href="{{ player.player.get_absolute_url }}">{{ player.full_name }}</a></td>
+                <td>{{ player.age }}</td>
+                <td>{{ player.games_played }}</td>
+                <td>{{ player.games_started }}</td>
+                <td>{{ player.minutes_played }}</td>
+                <td>{{ player.per }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
 
 

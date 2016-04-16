@@ -19,19 +19,20 @@ def home_page(request, code):
             parent_id__gt=0)
     else:
         current_tournament = Tournament.objects.filter(
-            league_id=league.id).order_by('-end_date')[0]
+            league_id=league.id).order_by('-end_date').first()
 
     current_games = Game.objects.filter(
         league_id=league.id,
-        schedule__gt=current_tournament.start_date,
-        schedule__lt=current_tournament.end_date).order_by('schedule')
+        schedule__gte=current_tournament.start_date,
+        schedule__lte=current_tournament.end_date).order_by('schedule')
 
     if date.today() > current_tournament.end_date:
         next_game = iter([])
         prev_game = iter([])
     else:
         next_game_date = current_games.filter(
-            schedule__gt=date.today()).order_by('schedule')[0].schedule.date()
+            schedule__gte=date.today()).order_by(
+            'schedule').first().schedule.date()
 
         next_game = Game.objects.filter(
             league_id=league.id,
@@ -39,8 +40,8 @@ def home_page(request, code):
                              datetime.combine(next_game_date, time.max)))
 
         prev_game_date = current_games.filter(
-            schedule__lt=next_game[0].schedule).order_by(
-            '-schedule')[0].schedule.date()
+            schedule__lte=next_game.first().schedule).order_by(
+            '-schedule').first().schedule.date()
 
         prev_game = Game.objects.filter(
             league_id=league.id,
@@ -388,6 +389,7 @@ def team_tournament_page(request, code, team_code, tournament_id):
     player_totals_table = []
     player_per_game_table = []
     player_per_three_six_table = []
+    player_advanced_table = []
 
     for player in players.order_by('last_name', 'first_name'):
         player_age = player.get_age(tournament.start_date, 0)
@@ -406,6 +408,11 @@ def team_tournament_page(request, code, team_code, tournament_id):
             games,
             player,
             'per_three_six')
+
+        player_advanced_dict = analytics.get_player_stat(
+            games,
+            player,
+            'advanced')
 
         player_totals_dict.update({
             'full_name': player.first_name + " " + player.last_name,
@@ -431,6 +438,15 @@ def team_tournament_page(request, code, team_code, tournament_id):
 
         player_per_three_six_table.append(player_per_three_six_dict)
 
+        player_advanced_dict.update({
+            'full_name': player.first_name + " " + player.last_name,
+            'age': player_age,
+            'player': player,
+            'per': analytics.get_per(games, player, tournament)
+            })
+
+        player_advanced_table.append(player_advanced_dict)
+
     return render(request, 'humblebola/team_page/team_tournament_page.html', {
         'league': league,
         'team': team,
@@ -450,6 +466,7 @@ def team_tournament_page(request, code, team_code, tournament_id):
         'player_totals_table': player_totals_table,
         'player_per_game_table': player_per_game_table,
         'player_per_three_six_table': player_per_three_six_table,
+        'player_advanced_table': player_advanced_table,
         })
 
 

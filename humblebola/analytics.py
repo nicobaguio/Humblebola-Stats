@@ -142,7 +142,7 @@ def get_pace(games, team=None):
 # Returns a rating [off/def] of a team OR a league in a given set of games.
 
 
-def get_eff_ratings(games, rating=None, team=None):
+def get_eff_ratings(games, rating=None, team=None, decimal=1):
     if team:
         team_games = games.filter(
             home_team_id=team.id) | games.filter(
@@ -241,10 +241,9 @@ def get_eff_ratings(games, rating=None, team=None):
             Decimal(game_stats.aggregate(
                 Sum('three_pt_made'))['three_pt_made__sum'])
 
-        return (100 * points / poss).quantize(Decimal(10) ** -1)
+        return (100 * points / poss).quantize(Decimal(10) ** -decimal)
 
-# Return a dict of a player's totals/per game/per-36/adv in either
-# regular or playoff games.
+# returns a dict of totals for all stats
 
 
 def get_stat(games):
@@ -524,6 +523,13 @@ def get_player_stat(games, player, table_type, game_type=0):
                                player_stat['total_personal_fouls']).quantize(
                                Decimal(10)**-1)
             })
+
+    elif table_type == 'advanced':
+        return ({
+            'games_played': games_played,
+            'games_started': games_started,
+            'minutes_played': total_minutes_played,
+            })
 # 60 = seconds per minute
 # 5 = 5 players on the court
 
@@ -761,3 +767,71 @@ def get_team_stat(games, team, table_type, team_type='team', game_type=0):
             'diff_orb': o_orb - d_orb,
             'diff_ftp': o_ftp - d_ftp,
             })
+
+
+def get_per(games, player, tournament, game_type=0):
+    player_games = GamePlayerStat.objects.filter(
+        player_id=player.id,
+        game_id__in=games.filter(
+            game_type=game_type).values_list('id', flat=True))
+
+    league_tournament_games = Game.objects.filter(
+        league_id=tournament.league.id,
+        schedule__gte=tournament.start_date,
+        schedule__lte=tournament.end_date)
+
+    league_games = GameTeamStat.objects.filter(
+        game_id__in=league_tournament_games.filter(
+            game_type=game_type).values_list('id', flat=True),
+        seconds_played__gt=0)
+
+    team_games = league_games.filter(team_id=PlayerTournamentTeam.objects.get(
+        tournament_id=tournament.id, player_id=player.id).team.id)
+
+    player_stat = get_player_stat(games, player, 'totals')
+    league_stat = get_stat(league_games)
+    team_stat = get_stat(team_games)
+
+    factor = (Decimal(2)/Decimal(3)) - \
+             ((Decimal(league_stat['total_assists']) /
+               Decimal(league_stat['total_fg_made'])) / 2) / \
+        (2 * (Decimal(league_stat['total_fg_made']) /
+         Decimal(league_stat['total_ft_made'])))
+
+    VOP = get_eff_ratings(league_tournament_games) / 100
+
+    DRB_P = Decimal(league_stat['total_defensive_reb']) / \
+        (Decimal(league_stat['total_defensive_reb']) +
+         Decimal(league_stat['total_offensive_reb']))
+
+    player_uPER = (1/Decimal(player_stat['minutes_played'])) * \
+                  (player_stat['three_pt_made'] +
+                   (2 * player_stat['assists'] / 3) +
+                   (2 - (factor * (Decimal(team_stat['total_assists']) /
+                    Decimal(team_stat['total_fg_made'])))) * Decimal(
+                    player_stat['fg_made']) +
+                   player_stat['ft_made'] / 2 *
+                   (1+(1-(Decimal(team_stat['total_assists']) /
+                    Decimal(team_stat['total_fg_made']))) +
+                    (2*(Decimal(team_stat['total_assists']) /
+                     Decimal(team_stat['total_fg_made']))/3)) -
+                   (VOP * player_stat['turnovers']) -
+                   (VOP * DRB_P *
+                    (Decimal(player_stat['fg_attempts']) -
+                        Decimal(player_stat['fg_made']))) -
+                   (VOP * (Decimal(44) / 100) * ((Decimal(44) / 100) +
+                    ((Decimal(56) / 100) * DRB_P)) *
+                    (Decimal(player_stat['ft_attempts']) -
+                        Decimal(player_stat['ft_made']))) +
+                   (VOP * (1-DRB_P) * Decimal(player_stat['defensive_reb'])) +
+                   (VOP * DRB_P * Decimal(player_stat['offensive_reb'])) +
+                   (VOP * Decimal(player_stat['steals'])) +
+                   (VOP * DRB_P * Decimal(player_stat['blocks'])) -
+                   (Decimal(player_stat['personal_fouls'])) *
+                   ((Decimal(league_stat['total_ft_made']) /
+                    Decimal(league_stat['total_personal_fouls'])) -
+                   (Decimal(44)/100) * VOP *
+                   (Decimal(league_stat['total_ft_made']) /
+                    Decimal(league_stat['total_personal_fouls']))))
+
+    return player_uPER
