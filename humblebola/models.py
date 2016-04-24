@@ -30,7 +30,7 @@ class League(models.Model):
     level = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'leagues'
 
     def __unicode__(self):
@@ -47,7 +47,7 @@ class Tournament(models.Model):
     short_name = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'tournaments'
         ordering = ('league', 'id')
 
@@ -63,7 +63,7 @@ class Team(models.Model):
     logo = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'teams'
 
 
@@ -82,7 +82,7 @@ class Game(models.Model):
                                              blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'games'
 
 
@@ -110,7 +110,7 @@ class Player(models.Model):
     real_last_name = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'players'
 
     def get_absolute_url(self):
@@ -154,7 +154,7 @@ class ArchivedTeamName(models.Model):
     end_date = models.DateField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'archived_team_names'
 
 
@@ -162,7 +162,7 @@ class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=80)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'auth_group'
 
 
@@ -171,7 +171,7 @@ class AuthGroupPermission(models.Model):
     permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'auth_group_permissions'
         unique_together = (('group', 'permission'),)
 
@@ -182,7 +182,7 @@ class AuthPermission(models.Model):
     codename = models.CharField(max_length=100)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'auth_permission'
         unique_together = (('content_type', 'codename'),)
 
@@ -200,7 +200,7 @@ class AuthUser(models.Model):
     date_joined = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'auth_user'
 
 
@@ -209,7 +209,7 @@ class AuthUserGroup(models.Model):
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'auth_user_groups'
         unique_together = (('user', 'group'),)
 
@@ -219,7 +219,7 @@ class AuthUserUserPermission(models.Model):
     permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'auth_user_user_permissions'
         unique_together = (('user', 'permission'),)
 
@@ -235,7 +235,7 @@ class DjangoAdminLog(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'django_admin_log'
 
 
@@ -244,7 +244,7 @@ class DjangoContentType(models.Model):
     model = models.CharField(max_length=100)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'django_content_type'
         unique_together = (('app_label', 'model'),)
 
@@ -255,7 +255,7 @@ class DjangoMigrations(models.Model):
     applied = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'django_migrations'
 
 
@@ -265,7 +265,7 @@ class DjangoSession(models.Model):
     expire_date = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'django_session'
 
 
@@ -280,7 +280,7 @@ class FibaGameInfo(models.Model):
     updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'fiba_game_infos'
 
 
@@ -295,7 +295,7 @@ class FibaGamePlayer(models.Model):
     updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'fiba_game_players'
 
 
@@ -315,7 +315,7 @@ class GameEvent(models.Model):
     lineup = models.TextField(blank=True, null=True)  # This field is a guess.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'game_events'
 
 
@@ -326,7 +326,7 @@ class GamePeriodScoring(models.Model):
     away_pts = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'game_period_scorings'
 
 
@@ -359,7 +359,7 @@ class GameTeamStat(models.Model):
     team_turnovers = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'game_team_stats'
 
 
@@ -392,7 +392,7 @@ class GamePlayerStat(models.Model):
         related_name="opp_game_player_stat")
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'game_player_stats'
 
 
@@ -401,7 +401,7 @@ class PlayerLeague(models.Model):
     league = models.ForeignKey(League)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'player_leagues'
 
 
@@ -409,7 +409,7 @@ class SchemaMigrations(models.Model):
     version = models.CharField(unique=True, max_length=255)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'schema_migrations'
 
 
@@ -433,7 +433,7 @@ class User(models.Model):
     updated_at = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'users'
 
 
@@ -450,5 +450,5 @@ class Video(models.Model):
     updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'videos'
